@@ -1,0 +1,52 @@
+{
+  "name": "clarifyjs",
+  "version": "0.1.0",
+  "description": "Generador de formularios dinámicos con validación automática usando Zod",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist",
+    "src/styles.css",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dinnger/ClarifyJS.git"
+  },
+  "keywords": [
+    "form",
+    "json",
+    "zod",
+    "validation",
+    "typescript",
+    "dynamic-forms",
+    "form-builder",
+    "schema-validation",
+    "form-generator"
+  ],
+  "author": "Dinnger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dinnger/ClarifyJS/issues"
+  },
+  "homepage": "https://github.com/dinnger/ClarifyJS#readme",
+  "peerDependencies": {
+    "zod": "^3.0.0 || ^4.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}

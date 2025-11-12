@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClarifyJS - Ejemplo de Integración con API</title>
+
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    body {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #6b7280;
+    }
+
+    .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f0f9ff;
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result-box.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-box h3 {
+      margin: 0 0 15px 0;
+      color: #1e40af;
+    }
+
+    .result-box pre {
+      background: white;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid #bfdbfe;
+    }
+
+    .code-block {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 30px 0;
+    }
+
+    .code-block h3 {
+      margin: 0 0 15px 0;
+      color: #374151;
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "zod": "https://cdn.jsdelivr.net/npm/zod@3.22.4/+esm"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { z } from "zod";
+    import { ClarifyJS } from "./index.ts";
+
+    // ===== ESQUEMA DE VALIDACIÓN =====
+    const userRegistrationSchema = z.object({
+      // Información Personal
+      firstName: z.string()
+        .min(2, "El nombre debe tener al menos 2 caracteres")
+        .max(50, "El nombre es muy largo"),
+
+      lastName: z.string()
+        .min(2, "El apellido debe tener al menos 2 caracteres")
+        .max(50, "El apellido es muy largo"),
+
+      email: z.string()
+        .email("Email inválido")
+        .toLowerCase(),
+
+      // Información de Cuenta
+      username: z.string()
+        .min(3, "El usuario debe tener al menos 3 caracteres")
+        .max(20, "El usuario es muy largo")
+        .regex(/^[a-zA-Z0-9_]+$/, "Solo letras, números y guión bajo"),
+
+      password: z.string()
+        .min(8, "La contraseña debe tener al menos 8 caracteres")
+        .regex(/[A-Z]/, "Debe contener al menos una mayúscula")
+        .regex(/[a-z]/, "Debe contener al menos una minúscula")
+        .regex(/[0-9]/, "Debe contener al menos un número"),
+
+      // Información Adicional
+      age: z.number()
+        .int("La edad debe ser un número entero")
+        .min(18, "Debes ser mayor de edad")
+        .max(120, "Edad inválida"),
+
+      country: z.enum(["México", "USA", "España", "Argentina", "Chile", "Colombia"]),
+
+      // Términos
+      acceptTerms: z.boolean()
+        .refine(val => val === true, "Debes aceptar los términos y condiciones"),
+    });
+
+    // ===== SIMULACIÓN DE API =====
+    async function sendToAPI(data) {
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Simular validación del servidor
+      if (data.email === "test@test.com") {
+        throw new Error("Este email ya está registrado");
+      }
+
+      // Simular respuesta exitosa
+      return {
+        success: true,
+        userId: Math.floor(Math.random() * 10000),
+        message: "Usuario registrado exitosamente",
+        data: data,
+      };
+    }
+
+    // ===== CREAR FORMULARIO =====
+    const form = ClarifyJS.fromSchema(userRegistrationSchema, {
+      labels: {
+        firstName: "Nombre",
+        lastName: "Apellido",
+        email: "Correo Electrónico",
+        username: "Nombre de Usuario",
+        password: "Contraseña",
+        age: "Edad",
+        country: "País",
+        acceptTerms: "Acepto los términos y condiciones",
+      },
+
+      // Callback mientras el usuario escribe
+      onChange: (data, errors) => {
+        console.log("📝 Cambio detectado:", data);
+        console.log("❌ Errores actuales:", errors);
+
+        // Podrías actualizar UI en tiempo real aquí
+        const hasErrors = Object.keys(errors).length > 0;
+        updateStatus(hasErrors ? "Hay errores en el formulario" : "Formulario válido ✓");
+      },
+
+      // Callback cuando se envía el formulario
+      onSubmit: async (data) => {
+        console.log("🚀 Formulario enviado con datos:", data);
+
+        // Mostrar loading
+        showLoading(true);
+        updateStatus("Enviando datos al servidor...");
+
+        try {
+          // Enviar a la API
+          const response = await sendToAPI(data);
+
+          console.log("✅ Respuesta del servidor:", response);
+
+          // Mostrar resultado
+          showResult(response);
+          updateStatus("¡Registro exitoso! 🎉");
+
+          // Opcional: Limpiar formulario o redirigir
+          // form.setData({});
+
+        } catch (error) {
+          console.error("❌ Error:", error);
+
+          showError(error.message);
+          updateStatus("Error: " + error.message);
+
+        } finally {
+          showLoading(false);
+        }
+      },
+    });
+
+    // ===== FUNCIONES AUXILIARES =====
+    function showLoading(show) {
+      const submitBtn = document.querySelector(".clarifyjs-submit");
+      if (submitBtn) {
+        submitBtn.disabled = show;
+        submitBtn.textContent = show ? "Enviando..." : "Registrarse";
+      }
+    }
+
+    function showResult(response) {
+      const resultBox = document.getElementById("result-box");
+      const resultContent = document.getElementById("result-content");
+
+      resultContent.textContent = JSON.stringify(response, null, 2);
+      resultBox.classList.add("show");
+      resultBox.style.borderColor = "#10b981";
+      resultBox.style.background = "#f0fdf4";
+
+      // Auto-hide después de 10 segundos
+      setTimeout(() => {
+        resultBox.classList.remove("show");
+      }, 10000);
+    }
+
+    function showError(message) {
+      const resultBox = document.getElementById("result-box");
+      const resultContent = document.getElementById("result-content");
+
+      resultContent.textContent = JSON.stringify({
+        error: message,
+        timestamp: new Date().toISOString(),
+      }, null, 2);
+
+      resultBox.classList.add("show");
+      resultBox.style.borderColor = "#ef4444";
+      resultBox.style.background = "#fef2f2";
+
+      // Auto-hide después de 5 segundos
+      setTimeout(() => {
+        resultBox.classList.remove("show");
+      }, 5000);
+    }
+
+    function updateStatus(message) {
+      const statusEl = document.getElementById("status");
+      if (statusEl) {
+        statusEl.textContent = message;
+      }
+    }
+
+    // ===== RENDERIZAR =====
+    window.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("form-container");
+      container.appendChild(form.render());
+
+      // Exponer para debugging
+      window.form = form;
+      console.log("💡 Tip: Usa 'form.getData()' en la consola para ver los datos actuales");
+    });
+  </script>
+</head>
+
+<body>
+  <div class="header">
+    <h1>🚀 Ejemplo de Integración Completa</h1>
+    <p>Formulario con validación Zod + Simulación de API</p>
+    <p id="status" style="color: #6b7280; font-size: 14px;"></p>
+  </div>
+
+  <div id="form-container"></div>
+
+  <div id="result-box" class="result-box">
+    <h3>📦 Respuesta del Servidor</h3>
+    <pre id="result-content"></pre>
+  </div>
+
+  <div class="code-block">
+    <h3>💡 Características de este Ejemplo</h3>
+    <ul style="margin: 0; padding-left: 20px; color: #374151;">
+      <li>✅ Validación en tiempo real con Zod</li>
+      <li>🔒 Validación de contraseña fuerte</li>
+      <li>📧 Validación de email y normalización (toLowerCase)</li>
+      <li>🌐 Simulación de llamada API asíncrona</li>
+      <li>⏳ Estados de carga (loading)</li>
+      <li>✨ Feedback visual de éxito/error</li>
+      <li>🐛 Manejo de errores del servidor</li>
+      <li>📊 Logs detallados en consola</li>
+    </ul>
+  </div>
+
+  <div class="code-block">
+    <h3>🎯 Prueba Estas Acciones</h3>
+    <ul style="margin: 0; padding-left: 20px; color: #374151;">
+      <li><strong>Email duplicado:</strong> Usa "test@test.com" para simular error del servidor</li>
+      <li><strong>Contraseña débil:</strong> Intenta una contraseña sin mayúsculas o números</li>
+      <li><strong>Edad inválida:</strong> Prueba con menos de 18 años</li>
+      <li><strong>Username inválido:</strong> Usa caracteres especiales como @ o #</li>
+      <li><strong>Consola:</strong> Abre DevTools para ver logs detallados</li>
+    </ul>
+  </div>
+
+  <div class="code-block">
+    <h3>🔍 Debugging en Consola</h3>
+    <pre><code>// Ver datos actuales del formulario
+form.getData()
+
+// Ver errores actuales
+form.getErrors()
+
+// Establecer valores programáticamente
+form.setData({
+  firstName: "Juan",
+  lastName: "Pérez",
+  email: "juan@example.com",
+  username: "juanperez",
+  password: "Secure123",
+  age: 25,
+  country: "México",
+  acceptTerms: true
+})</code></pre>
+  </div>
+</body>
+
+</html>
