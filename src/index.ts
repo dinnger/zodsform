@@ -1,4 +1,6 @@
 import { z as zodOriginal, ZodType, type ZodTypeAny, type ZodError } from "zod";
+import type { ComponentConfig } from "./components";
+import { DefaultComponents } from "./components";
 
 // Crear una versión extendida de z que soporte enum con objetos
 const createExtendedZ = () => {
@@ -45,6 +47,7 @@ interface StructureItem {
   style?: { size: number; className: string };
   mask?: string | RegExp;
   isPassword?: boolean;
+  customComponent?: ComponentConfig;
   children?: Structure;
   validation?: ZodTypeAny;
 }
@@ -91,6 +94,14 @@ ZodType.prototype.password = function(withToggle: boolean = true) {
   });
 };
 
+ZodType.prototype.component = function(component: ComponentConfig) {
+  const C = this.constructor as any; 
+  return new C({
+    ...this._def,
+    customComponent: component,
+  });
+};
+
 declare module 'zod' {
   // Añadimos 'label' a la definición base que todos los esquemas usan
   interface ZodTypeDef {
@@ -99,6 +110,7 @@ declare module 'zod' {
     valuesMap?: Record<string, string>;
     mask?: string | RegExp;
     isPassword?: boolean;
+    customComponent?: ComponentConfig;
   }
 
   // Añadimos el método .label() a la clase base ZodType
@@ -111,6 +123,8 @@ declare module 'zod' {
     mask(mask: string | RegExp): this;
     /** Mark as password field with optional show/hide toggle */
     password(withToggle?: boolean): this;
+    /** Define a custom component for rendering this field */
+    component(component: ComponentConfig): this;
   }
 }
 
@@ -137,6 +151,7 @@ class ZodExtractor {
       style: _def.style,
       mask: _def.mask,
       isPassword: _def.isPassword,
+      customComponent: _def.customComponent,
     };
 
     // ZodString
@@ -235,6 +250,7 @@ class ZodExtractor {
         style: validationInfo.style,
         mask: validationInfo.mask,
         isPassword: validationInfo.isPassword,
+        customComponent: validationInfo.customComponent,
         required: validationInfo.required,
         validation: zodType,
       };
@@ -435,6 +451,38 @@ class ClarifyJS {
    * Crea el input apropiado según el tipo
    */
   private createInput(item: StructureItem, fieldPath: string): HTMLElement {
+    // Si hay un componente personalizado, usarlo
+    if (item.customComponent) {
+      const input = item.customComponent.render({
+        fieldPath,
+        type: item.type,
+        properties: item.properties,
+        value: this.getNestedValue(this.formData, fieldPath),
+        required: item.required,
+        placeholder: item.placeholder,
+        mask: item.mask,
+        isPassword: item.isPassword,
+      });
+
+      // Agregar event listeners
+      const actualInput = input.querySelector('input, textarea, select') || input;
+      actualInput.addEventListener("input", () => {
+        this.handleFieldChange(fieldPath, actualInput as any, item);
+      });
+
+      actualInput.addEventListener("blur", () => {
+        this.validateField(fieldPath, item);
+      });
+
+      // Aplicar máscara si existe
+      if (item.mask && actualInput instanceof HTMLInputElement) {
+        this.applyMask(actualInput, item.mask);
+      }
+
+      return input;
+    }
+
+    // Código original para componentes sin personalizar
     let input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
     const baseClasses = "w-full px-3 py-2 border-2 border-gray-300 rounded-md text-sm font-inherit transition-all focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100".split(" ");
     switch (item.type) {
@@ -876,3 +924,14 @@ class ClarifyJS {
 // También puedes exportar para usar como librería
 export { ClarifyJS, ZodExtractor, z };
 export type { Structure, StructureItem, FormConfig };
+
+// Exportar componentes
+export { 
+  TextInput, 
+  TextArea, 
+  SelectInput, 
+  CheckboxInput, 
+  PasswordInput,
+  DefaultComponents 
+} from './components';
+export type { ComponentConfig, RenderConfig } from './components';
