@@ -39,6 +39,7 @@ interface StructureItem {
   description?: string;
   required?: boolean;
   properties?: {
+    visible?: boolean;
     disabled?: boolean;
     min?: number;
     max?: number;
@@ -72,11 +73,11 @@ ZodType.prototype.label = function(label: string) {
   });
 };
 
-ZodType.prototype.properties = function({ disabled, min, max, size, className, options, mask }: { disabled?: boolean, min?: number, max?: number, size: number, className?: string, options?: Array<{ value: string | number; label: string }>, mask?: string | RegExp }) {
+ZodType.prototype.properties = function(properties: StructureItem["properties"]) {
   const C = this.constructor as any; 
   return new C({
     ...this._def,
-    properties: { disabled, min, max, size, className, options, mask },
+    properties,
   });
 };
 
@@ -102,15 +103,7 @@ declare module 'zod' {
   // Añadimos 'label' a la definición base que todos los esquemas usan
   interface ZodTypeDef {
     label?: string;
-    properties?:{
-      disabled?: boolean;
-      min?: number;
-      max?: number;
-      size?: number; 
-      className?: string;
-      options?: Array<{ value: string | number; label: string }>;
-      mask?: string | RegExp;
-    };
+    properties?: StructureItem["properties"];
     valuesMap?: Record<string, string>;
     isPassword?: boolean;
     customComponent?: ComponentConfig;
@@ -122,7 +115,7 @@ declare module 'zod' {
     /** Define a label for the schema */
     label(label: string): this;
     /** Define a set of properties for the schema */
-    properties({disabled, min, max, size, className, options, mask}:{disabled?: boolean, min?: number, max?: number, size?: number, className?: string, options?: Array<{ value: string | number; label: string }>, mask?: string | RegExp}):this;
+    properties(properties:StructureItem["properties"]):this;
     /** Mark as password field with optional show/hide toggle */
     password(withToggle?: boolean): this;
     /** Define a custom component for rendering this field */
@@ -330,6 +323,7 @@ class ClarifyJS {
   private schema: zodOriginal.ZodObject<any> | undefined;
   private formData: Record<string, any> = {};
   private errors: Record<string, string[]> = {};
+  private previousErrorFields: Set<string> = new Set();
   private onSubmitCallback: ((data: any) => void) | undefined;
   private onChangeCallback: ((data: any, errors: any) => void) | undefined;
   private onValidateCallback: ((isValid: boolean, data: any, errors: any) => void) | undefined;
@@ -549,9 +543,9 @@ class ClarifyJS {
     actualInput.addEventListener(eventType, () => {
       this.handleFieldChange(fieldPath, actualInput as any, item);
       // Para checkboxes, validar inmediatamente después del cambio
-      if (actualInput instanceof HTMLInputElement && actualInput.type === 'checkbox') {
+      // if (actualInput instanceof HTMLInputElement && actualInput.type === 'checkbox') {
         this.validateField(fieldPath, item);
-      }
+      // }
     });
 
     actualInput.addEventListener("blur", () => {
@@ -643,8 +637,7 @@ class ClarifyJS {
       this.onChangeCallback(this.formData, this.errors);
     }
 
-    // Validar el formulario completo para actualizar el estado de validación
-    this.validateFormState();
+
   }
 
   /**
@@ -707,6 +700,9 @@ class ClarifyJS {
       `[data-error-for="${fieldPath}"]`
     );
 
+    // Guardar el campo como que ha tenido errores anteriormente
+    this.previousErrorFields.add(fieldPath);
+
     if (!result.success) {
       const errors = JSON.parse(result.error.toString()).map((e: any) => e.message);
       this.errors[fieldPath] = errors;
@@ -726,6 +722,8 @@ class ClarifyJS {
         input.classList.add("border-red-500", "focus:border-red-500", "focus:ring-red-100");
       }
     } else {
+      // El campo individual es válido, pero debemos verificar si el schema completo tiene errores para este campo
+      // (por ejemplo, errores de refine que dependen de múltiples campos)
       delete this.errors[fieldPath];
 
       if (errorContainer) {
@@ -742,109 +740,49 @@ class ClarifyJS {
         input.classList.remove("border-red-500", "focus:border-red-500", "focus:ring-red-100");
         input.classList.add("border-gray-300", "focus:border-blue-500", "focus:ring-blue-100");
       }
-    }
-  }
-
-  /**
-   * Valida el estado completo del formulario y llama a onValidate
-   */
-  private validateFormState() {
-    // Validar con el schema completo si existe
-    if (!this.schema) return;
-
-    const result = this.schema.safeParse(this.formData);
-    const isValid = result.success;
-    
-    // Limpiar errores del schema previos y actualizar con los nuevos
-    if (!result.success) {
-      // Crear un nuevo objeto de errores basado en el schema
-      const schemaErrors: Record<string, string[]> = {};
-      const zodErrors = (result.error as any).errors;
       
-      if (zodErrors && Array.isArray(zodErrors)) {
-        zodErrors.forEach((err: any) => {
-          const fieldPath = err.path.join(".");
-          if (!schemaErrors[fieldPath]) {
-            schemaErrors[fieldPath] = [];
-          }
-          schemaErrors[fieldPath].push(err.message);
-        });
-      }
-      
-      // Combinar errores: mantener errores individuales y agregar/actualizar con errores del schema
-      this.errors = { ...this.errors, ...schemaErrors };
-      
-      // Actualizar la UI para cada campo con error del schema
-      Object.entries(schemaErrors).forEach(([fieldPath, errors]) => {
-        const errorContainer = this.container.querySelector(
-          `[data-error-for="${fieldPath}"]`
-        );
-        if (errorContainer) {
-          errorContainer.textContent = errors.join(", ");
-          errorContainer.classList.remove("opacity-0");
-          errorContainer.classList.add("opacity-100");
-        }
-      });
-    } else {
-      // Si el formulario es válido, limpiar todos los errores del schema
-      // pero mantener errores individuales de validación que aún no se han corregido
-      const fieldsWithErrors = Object.keys(this.errors);
-      fieldsWithErrors.forEach(fieldPath => {
-        // Re-validar cada campo individual para ver si aún tiene errores
-        const field = this.getFieldFromPath(fieldPath);
-        if (field && field.validation) {
-          const value = this.getNestedValue(this.formData, fieldPath);
-          const fieldResult = field.validation.safeParse(value);
+      // Verificar si el schema completo tiene errores para este campo (ej: refine)
+      if (this.schema) {
+        const schemaResult = this.schema.safeParse(this.formData);
+        if (!schemaResult.success) {
+          const zodErrors = schemaResult.error.issues;
           
-          if (fieldResult.success) {
-            // Limpiar error si el campo ahora es válido
-            delete this.errors[fieldPath];
-            const errorContainer = this.container.querySelector(
-              `[data-error-for="${fieldPath}"]`
-            );
-            if (errorContainer) {
-              errorContainer.textContent = "";
-              errorContainer.classList.remove("opacity-100");
-              errorContainer.classList.add("opacity-0");
-            }
+          // Buscar si hay errores para este campo específico en el schema completo
+          const fieldErrors = zodErrors.filter((err: any) => {
+            const listPreviousErrorFields = Array.from(this.previousErrorFields);
+            return listPreviousErrorFields.includes(err.path.join("."));
+          });
+          
+          if (fieldErrors.length > 0) {
+
+            fieldErrors.forEach((err: any) => {
+              err.path.forEach((key: string) => {
+                this.errors[key] = err.message;
+                const input = this.container.querySelector(`[name="${key}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+                 const errorContainer = this.container.querySelector(`[data-error-for="${key}"]`);
+                 const field = this.container.querySelector(`[data-field="${key}"]`);
+
+                   if (errorContainer) {
+                      errorContainer.textContent = err.message;
+                      errorContainer.classList.remove("opacity-0");
+                      errorContainer.classList.add("opacity-100");
+                    }
+                    
+                    field?.classList.add("has-error");
+                    
+                    if (input) {
+                      input.classList.remove("border-gray-300", "focus:border-blue-500", "focus:ring-blue-100");
+                      input.classList.add("border-red-500", "focus:border-red-500", "focus:ring-red-100");
+                    }
+              });
+            });
           }
         }
-      });
-    }
-
-    // Invocar callback onValidate si existe
-    if (this.onValidateCallback) {
-      this.onValidateCallback(isValid, this.formData, this.errors);
-    }
-  }
-  
-  /**
-   * Obtiene el campo desde la estructura usando un path
-   */
-  private getFieldFromPath(fieldPath: string): StructureItem | null {
-    try {
-      const keys = fieldPath.split(".");
-      let current: any = this.structure;
-      
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        // @ts-ignore - current puede ser any en este contexto
-        if (!current || !current[key]) return null;
-        
-        if (i === keys.length - 1) {
-          // @ts-ignore - current puede ser any en este contexto
-          return current[key] as StructureItem;
-        }
-        
-        // @ts-ignore - current puede ser any en este contexto
-        current = current[key].children;
       }
-      
-      return null;
-    } catch {
-      return null;
     }
   }
+
+  
 
   /**
    * Maneja el submit del formulario

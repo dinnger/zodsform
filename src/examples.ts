@@ -7,18 +7,16 @@ export function registrationFormExample() {
     lastName: z.string().min(2, "Mínimo 2 caracteres").label("Apellido").properties({size:6}).optional(),
     email: z.string().email("Email inválido").label("Correo Electrónico"),
     password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres").label("Contras Segura").password(),
-    confirmPassword: z.string().label("Confirmar Contraseña"),
-    age: z.number().min(18, "Debes ser mayor de edad").max(120).label("Edad"),
+    confirmPassword: z.string().label("Confirmar Contraseña").password(),
     country: z.enum({mx: "México", us: "USA", es: "España", ar: "Argentina"}).label("País"),
-    acceptTerms: z.boolean().refine(val => val === true, {
-      message: "Debes aceptar los términos",
-    }).label("Terminos y condiciones"),
+    acceptTerms: z.boolean().label("Terminos y condiciones").optional(),
+    age: z.number().min(18, "Debes ser mayor de edad").max(120).label("Edad").properties({visible:false}),
   }).refine(data => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
 
-  return ClarifyJS.fromSchema(registrationSchema, {
+  const form = ClarifyJS.fromSchema(registrationSchema, {
     onValidate: (isValid, data, errors) => {
       // Este callback se puede usar con frameworks reactivos
       // Vue: ref(isValid) / React: setState(isValid) / Angular: signal(isValid)
@@ -36,12 +34,22 @@ export function registrationFormExample() {
     },
     onChange: (data, errors) => {
       console.log("Cambio detectado:", { data, errors });
+      
+      // Mostrar/ocultar campo age según firstName tenga valor
+      if (data.firstName && data.firstName !== "") {
+        form.setFieldProperty("age", "visible", true);
+      } else {
+        form.setFieldProperty("age", "visible", false);
+      }
+      
     },
     onSubmit: (data) => {
       console.log("✅ Registro exitoso:", data);
       alert("¡Registro exitoso! Ver consola.");
     },
   });
+
+  return form;
 }
 
 
@@ -59,7 +67,7 @@ export function addressFormExample() {
     phone: z.string().regex(/^\d{10}$/, "Teléfono debe tener 10 dígitos"),
   });
 
-  return ClarifyJS.fromSchema(addressSchema, {
+  const form =  ClarifyJS.fromSchema(addressSchema, {
     onValidate: (isValid, _data, errors) => {
       console.log("🔍 Estado de validación:", isValid ? "✅ Válido" : "❌ Inválido");
       if (!isValid) {
@@ -70,11 +78,31 @@ export function addressFormExample() {
         (window as any).updateSubmitButton(isValid);
       }
     },
+    onChange: (data, errors) => {
+      console.log("Cambio detectado:", { data, errors });
+      
+      // Mostrar/ocultar campo número según fullName tenga valor
+      if (data.fullName && data.fullName !== "") {
+        form.setFieldProperty("address.number", "visible", true);
+        form.setFieldProperty("address.street", "size", 6); // Reducir tamaño de street
+      } else {
+        form.setFieldProperty("address.number", "visible", false);
+        form.setFieldProperty("address.street", "size", 12); // Full width cuando number está oculto
+      }
+      
+      // Deshabilitar zipCode si no hay ciudad
+      if (data.address?.city) {
+        form.setFieldProperty("address.zipCode", "disabled", false);
+      } else {
+        form.setFieldProperty("address.zipCode", "disabled", true);
+      }
+    },
     onSubmit: (data) => {
       console.log("✅ Dirección guardada:", data);
       alert("¡Dirección guardada! Ver consola.");
     },
   });
+  return form;
 }
 
 // ==================== EJEMPLO 4: FORMULARIO DE PRODUCTO ====================
