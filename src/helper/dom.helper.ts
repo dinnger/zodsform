@@ -161,6 +161,7 @@ export class DOMHelper {
             optionElement.textContent = option.label;
             select.appendChild(optionElement);
           });
+          select.value = "";
         }
         break;
 

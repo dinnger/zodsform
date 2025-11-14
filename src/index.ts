@@ -305,9 +305,6 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
     this.previousErrorFields.add(fieldPath);
 
     if (!result.success && result.errors) {
-      console.log(result.errors);
-      // Campo inválido - mostrar error
-      console.log('error',this.errors)
       this.errors[fieldPath] = result.errors;
       DOMHelper.showFieldError(this.container, fieldPath, result.errors);
     } else {
@@ -329,7 +326,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
   private validateCrossFieldErrors() {
     if (!this.schema) return;
 
-    const schemaResult = this.schema.safeParse(this.formData);
+    const schemaResult =  ValidationHelper.validateVisibleFieldsOnly(this.schema, this.structure,this.formData);
     if (!schemaResult.success) {
       const zodErrors = schemaResult.error.issues;
     
@@ -341,7 +338,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
       });
       
       if (fieldErrors.length > 0) {
-        DOMHelper.applyErrorStyles(this.container, fieldErrors.map(err => ({
+        DOMHelper.applyErrorStyles(this.container, fieldErrors.map((err: any) => ({
           path: err.path.map(String),
           message: err.message
         })));
@@ -367,11 +364,9 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
     const hasErrors = Object.keys(this.errors).length > 0;
     let isValid = !hasErrors;
 
-    // Validar con el schema completo si existe
+    // Validar con el schema completo si existe (solo campos visibles)
     if (this.schema && !hasErrors) {
-      const result = this.schema.safeParse(this.formData);
-      console.log({schema:this.schema})
-      console.log({result})
+      const result =  ValidationHelper.validateVisibleFieldsOnly(this.schema, this.structure,this.formData);
       if (!result.success) {
         isValid = false;
       }
@@ -394,9 +389,9 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
     const hasErrors = Object.keys(this.errors).length > 0;
     let isValid = !hasErrors;
 
-    // Validar con el schema completo si existe
+    // Validar con el schema completo si existe (solo campos visibles)
     if (this.schema && !hasErrors) {
-      const result = this.schema.safeParse(this.formData);
+      const result = ValidationHelper.validateVisibleFieldsOnly(this.schema, this.structure, this.formData);
 
       if (!result.success) {
         console.error("Errores de validación del schema:", result.error);

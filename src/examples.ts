@@ -6,26 +6,28 @@ export function registrationFormExample() {
     firstName: z.string('El nombre es obligatorio').min(2, "Mínimo 2 caracteres").label("Nombre").properties({size:6}).optional(),
     lastName: z.string().min(2, "Mínimo 2 caracteres").label("Apellido").properties({size:6}).optional(),
     email: z.string().email("Email inválido").label("Correo Electrónico"),
-    password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres").label("Contras Segura").password(),
+     security: z.object({
+      password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres").label("Contras Segura").password(),
     confirmPassword: z.string().label("Confirmar Contraseña").password(),
+    }).label('Seguridad'),
     country: z.enum({mx: "México", us: "USA", es: "España", ar: "Argentina"}).label("País"),
     zipCode: z.string().length(5, "Código postal debe ser 5 dígitos").label("Código Postal").properties({mask: "#####"}),
-    acceptTerms: z.boolean().properties({size:5,placeholder: "Acepto los términos y condiciones"})
+    acceptTerms: z.boolean().properties({size:3,placeholder: "Acepto los términos y condiciones"})
     .refine(data => data === true, {
       message: "Debes aceptar los términos y condiciones",
       path: ["acceptTerms"],
     }),
     age: z.number().min(18, "Debes ser mayor de edad").max(120).label("Edad").properties({visible:false}),
-  }).refine(data => data.password === data.confirmPassword, {
+  }).refine(data => data.security.password === data.security.confirmPassword, {
     message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
+    path: ["security.confirmPassword"],
   });
 
   const form = ClarifyJS.fromSchema(registrationSchema, {
-    onValidate: (isValid, data, errors) => {
+    onValidate: (isValid, _data, _errors) => {
       // Este callback se puede usar con frameworks reactivos
       // Vue: ref(isValid) / React: setState(isValid) / Angular: signal(isValid)
-      console.log("🔍 Validación ejecutada:", { isValid, data, errors });
+      // console.log("🔍 Validación ejecutada:", { isValid, data, errors });
       
       // Actualizar el estado del botón de submit
       if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {
@@ -37,8 +39,8 @@ export function registrationFormExample() {
       // React: setFormValid(isValid)
       // Angular: formValidSignal.set(isValid)
     },
-    onChange: (data, errors) => {
-      console.log("Cambio detectado:", { data, errors });
+    onChange: (data, _errors) => {
+      // console.log("Cambio detectado:", { data, errors });
       
       // Mostrar/ocultar campo age según firstName tenga valor
       if (data.firstName && data.firstName !== "") {

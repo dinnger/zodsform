@@ -19,7 +19,8 @@
     "dev:ts": "tsc --watch",
     "dev": "npm run build:css && npm run dev:ts",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -52,12 +53,17 @@
     "zod": "^3.0.0 || ^4.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/cli": "^4.1.17",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
+    "@vitest/browser": "^4.0.8",
+    "@vitest/browser-playwright": "^4.0.8",
     "autoprefixer": "^10.4.22",
+    "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
   }
 }

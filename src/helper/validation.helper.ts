@@ -1,4 +1,5 @@
-import type { StructureItem } from "../interface";
+import type { Structure, StructureItem, zodOrigin } from "../interface";
+import { NestedObjectUtil } from "../utils";
 
 /**
  * Helper para manejo de validaciones de campos
@@ -63,4 +64,103 @@ export class ValidationHelper {
 
     return { success: true };
   }
+
+
+
+  /**
+   * Obtiene las claves de campos que tienen visible=false
+   */
+  static getInvisibleFields(structure: Structure, parentPath: string = ""): Set<string> {
+    const invisibleFields = new Set<string>();
+
+    for (const [key, item] of Object.entries(structure)) {
+      const fieldPath = parentPath ? `${parentPath}.${key}` : key;
+
+      // Si el campo no es visible, agregarlo al conjunto
+      if (item.properties?.visible === false) {
+        invisibleFields.add(fieldPath);
+      }
+
+      // Si tiene hijos, buscar recursivamente
+      if (item.children) {
+        const childInvisible = this.getInvisibleFields(item.children, fieldPath);
+        childInvisible.forEach(path => invisibleFields.add(path));
+      }
+    }
+
+    return invisibleFields;
+  }
+
+  /**
+   * Valida el schema excluyendo campos con visible=false
+   */
+  static validateVisibleFieldsOnly(schema: zodOrigin.ZodObject<any>, structure: Structure, data: any): { success: boolean; error?: any; data?: any } {
+    if (!schema) {
+      return { success: true, data };
+    }
+
+    // Obtener campos invisibles
+    const invisibleFields = this.getInvisibleFields(structure);
+
+    // Si no hay campos invisibles, validar normalmente
+    if (invisibleFields.size === 0) {
+      return schema.safeParse(data) as any;
+    }
+
+    // Crear una copia de los datos sin los campos invisibles
+    const filteredData = { ...data };
+    invisibleFields.forEach(fieldPath => {
+      const keys = fieldPath.split('.');
+      if (keys.length === 1) {
+        const key = keys[0];
+        if (key) {
+          delete filteredData[key];
+        }
+      } else {
+        // Para paths anidados, eliminar solo la propiedad específica
+        NestedObjectUtil.delete(filteredData, fieldPath);
+      }
+    });
+
+    // Construir schema modificado usando .omit() recursivamente
+    const modifiedSchema = this.buildSchemaWithOmittedFields(schema, invisibleFields);
+
+    // Validar con el schema modificado
+    const result = modifiedSchema.safeParse(data) as any;
+    return result;
+  }
+
+  /**
+   * Construye un nuevo schema omitiendo los campos invisibles usando .omit()
+   */
+  private static buildSchemaWithOmittedFields(
+    schema: zodOrigin.ZodObject<any>,
+    invisibleFields: Set<string>
+  ): zodOrigin.ZodObject<any> {
+    // Copiar el schema original con safeExtend para preservar refines
+    let copySchema = schema.safeExtend({});
+
+
+    invisibleFields.forEach(fieldPath => {
+      const keys = fieldPath.split('.');
+      if (keys.length === 1) {
+        // Campo de nivel superior
+        const key = keys[0] as string;
+        copySchema = copySchema.omit({ [key]: true });
+      } else {
+        
+      }
+    });
+
+    if (copySchema && schema._def?.checks && Array.isArray((schema._def as any).checks) && (schema._def as any).checks.length > 0) {
+      for (const check of schema._def.checks) {
+        copySchema = copySchema.refine((check as any).def.fn,{message:(check as any).def.error(),path:(check as any).def.path})
+      }
+    }
+    return copySchema;
+  }
+
+
+
+  
 }

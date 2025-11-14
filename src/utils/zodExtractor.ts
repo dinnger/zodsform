@@ -179,14 +179,13 @@ class ZodExtractor {
     return structure;
   }
 
-
-
-  private static formatLabel(key: string): string {
-    return key
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase())
-      .trim();
-  }
+  // Método no utilizado actualmente pero puede ser útil en el futuro
+  // private static formatLabel(key: string): string {
+  //   return key
+  //     .replace(/([A-Z])/g, " $1")
+  //     .replace(/^./, (str) => str.toUpperCase())
+  //     .trim();
+  // }
 }
 
 export { ZodExtractor }
