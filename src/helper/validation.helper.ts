@@ -1,166 +1,159 @@
-import type { Structure, StructureItem, zodOrigin } from "../interface";
-import { NestedObjectUtil } from "../utils";
+import type { Structure, StructureItem, zodOrigin } from '../interface'
+import { NestedObjectUtil } from '../utils'
 
 /**
  * Helper para manejo de validaciones de campos
  */
 export class ValidationHelper {
-  /**
-   * Valida si un campo vacío/undefined debe considerarse válido
-   */
-  static isEmptyAndOptional(value: any, isRequired: boolean): boolean {
-    return !isRequired && (value === undefined || value === null || value === '');
-  }
+	/**
+	 * Valida si un campo vacío/undefined debe considerarse válido
+	 */
+	static isEmptyAndOptional(value: any, isRequired: boolean): boolean {
+		return !isRequired && (value === undefined || value === null || value === '')
+	}
 
-  /**
-   * Valida si esta visible
-   */
-  static isVisible(properties: StructureItem["properties"]): boolean {
-    if (!properties || properties.visible === undefined) return true;
-    return properties?.visible === true;
-  }
+	/**
+	 * Valida si esta visible
+	 */
+	static isVisible(properties: StructureItem['properties']): boolean {
+		if (!properties || properties.visible === undefined) return true
+		return properties?.visible === true
+	}
 
-  /**
-   * Extrae el valor actual de un input considerando máscaras y tipos especiales
-   */
-  static extractInputValue(
-    input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-    type: string
-  ): any {
-    if (input instanceof HTMLInputElement && input.type === "checkbox") {
-      return input.checked;
-    }
-    
-    if (type === "number") {
-      return input.value ? Number(input.value) : undefined;
-    }
-    
-    // Si el campo tiene máscara de formato, usar el valor sin formato
-    if (input instanceof HTMLInputElement && input.hasAttribute('data-raw-value')) {
-      return input.getAttribute('data-raw-value') || undefined;
-    }
-    
-    // Para campos de texto, si está vacío usar undefined
-    return input.value || undefined;
-  }
+	/**
+	 * Extrae el valor actual de un input considerando máscaras y tipos especiales
+	 */
+	static extractInputValue(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, type: string): any {
+		if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+			return input.checked
+		}
 
-  /**
-   * Valida un campo individual con su esquema de validación
-   */
-  static validateFieldValue(item: StructureItem, value: any): {
-    success: boolean;
-    errors?: string[];
-  } {
-    if (!item.validation) {
-      return { success: true };
-    }
+		if (type === 'number') {
+			return input.value ? Number(input.value) : undefined
+		}
 
-    const result = item.validation.safeParse(value);
+		// Si el campo tiene máscara de formato, usar el valor sin formato
+		if (input instanceof HTMLInputElement && input.hasAttribute('data-raw-value')) {
+			return input.getAttribute('data-raw-value') || undefined
+		}
 
-    if (!result.success) {
-      const errors = JSON.parse(result.error.toString()).map((e: any) => e.message);
-      return { success: false, errors };
-    }
+		// Para campos de texto, si está vacío usar undefined
+		return input.value || undefined
+	}
 
-    return { success: true };
-  }
+	/**
+	 * Valida un campo individual con su esquema de validación
+	 */
+	static validateFieldValue(
+		item: StructureItem,
+		value: any
+	): {
+		success: boolean
+		errors?: string[]
+	} {
+		if (!item.validation) {
+			return { success: true }
+		}
 
+		const result = item.validation.safeParse(value)
 
+		if (!result.success) {
+			const errors = JSON.parse(result.error.toString()).map((e: any) => e.message)
+			return { success: false, errors }
+		}
 
-  /**
-   * Obtiene las claves de campos que tienen visible=false
-   */
-  static getInvisibleFields(structure: Structure, parentPath: string = ""): Set<string> {
-    const invisibleFields = new Set<string>();
+		return { success: true }
+	}
 
-    for (const [key, item] of Object.entries(structure)) {
-      const fieldPath = parentPath ? `${parentPath}.${key}` : key;
+	/**
+	 * Obtiene las claves de campos que tienen visible=false
+	 */
+	static getInvisibleFields(structure: Structure, parentPath: string = ''): Set<string> {
+		const invisibleFields = new Set<string>()
 
-      // Si el campo no es visible, agregarlo al conjunto
-      if (item.properties?.visible === false) {
-        invisibleFields.add(fieldPath);
-      }
+		for (const [key, item] of Object.entries(structure)) {
+			const fieldPath = parentPath ? `${parentPath}.${key}` : key
 
-      // Si tiene hijos, buscar recursivamente
-      if (item.children) {
-        const childInvisible = this.getInvisibleFields(item.children, fieldPath);
-        childInvisible.forEach(path => invisibleFields.add(path));
-      }
-    }
+			// Si el campo no es visible, agregarlo al conjunto
+			if (item.properties?.visible === false) {
+				invisibleFields.add(fieldPath)
+			}
 
-    return invisibleFields;
-  }
+			// Si tiene hijos, buscar recursivamente
+			if (item.children) {
+				const childInvisible = ValidationHelper.getInvisibleFields(item.children, fieldPath)
+				childInvisible.forEach((path) => invisibleFields.add(path))
+			}
+		}
 
-  /**
-   * Valida el schema excluyendo campos con visible=false
-   */
-  static validateVisibleFieldsOnly(schema: zodOrigin.ZodObject<any>, structure: Structure, data: any): { success: boolean; error?: any; data?: any } {
-    if (!schema) {
-      return { success: true, data };
-    }
+		return invisibleFields
+	}
 
-    // Obtener campos invisibles
-    const invisibleFields = this.getInvisibleFields(structure);
+	/**
+	 * Valida el schema excluyendo campos con visible=false
+	 */
+	static validateVisibleFieldsOnly(
+		schema: zodOrigin.ZodObject<any>,
+		structure: Structure,
+		data: any
+	): { success: boolean; error?: any; data?: any } {
+		if (!schema) {
+			return { success: true, data }
+		}
 
-    // Si no hay campos invisibles, validar normalmente
-    if (invisibleFields.size === 0) {
-      return schema.safeParse(data) as any;
-    }
+		// Obtener campos invisibles
+		const invisibleFields = ValidationHelper.getInvisibleFields(structure)
 
-    // Crear una copia de los datos sin los campos invisibles
-    const filteredData = { ...data };
-    invisibleFields.forEach(fieldPath => {
-      const keys = fieldPath.split('.');
-      if (keys.length === 1) {
-        const key = keys[0];
-        if (key) {
-          delete filteredData[key];
-        }
-      } else {
-        // Para paths anidados, eliminar solo la propiedad específica
-        NestedObjectUtil.delete(filteredData, fieldPath);
-      }
-    });
+		// Si no hay campos invisibles, validar normalmente
+		if (invisibleFields.size === 0) {
+			return schema.safeParse(data) as any
+		}
 
-    // Construir schema modificado usando .omit() recursivamente
-    const modifiedSchema = this.buildSchemaWithOmittedFields(schema, invisibleFields);
+		// Crear una copia de los datos sin los campos invisibles
+		const filteredData = { ...data }
+		invisibleFields.forEach((fieldPath) => {
+			const keys = fieldPath.split('.')
+			if (keys.length === 1) {
+				const key = keys[0]
+				if (key) {
+					delete filteredData[key]
+				}
+			} else {
+				// Para paths anidados, eliminar solo la propiedad específica
+				NestedObjectUtil.delete(filteredData, fieldPath)
+			}
+		})
 
-    // Validar con el schema modificado
-    const result = modifiedSchema.safeParse(data) as any;
-    return result;
-  }
+		// Construir schema modificado usando .omit() recursivamente
+		const modifiedSchema = ValidationHelper.buildSchemaWithOmittedFields(schema, invisibleFields)
 
-  /**
-   * Construye un nuevo schema omitiendo los campos invisibles usando .omit()
-   */
-  private static buildSchemaWithOmittedFields(
-    schema: zodOrigin.ZodObject<any>,
-    invisibleFields: Set<string>
-  ): zodOrigin.ZodObject<any> {
-    // Copiar el schema original con safeExtend para preservar refines
-    let copySchema = schema.safeExtend({});
+		// Validar con el schema modificado
+		const result = modifiedSchema.safeParse(data) as any
+		return result
+	}
 
+	/**
+	 * Construye un nuevo schema omitiendo los campos invisibles usando .omit()
+	 */
+	private static buildSchemaWithOmittedFields(schema: zodOrigin.ZodObject<any>, invisibleFields: Set<string>): zodOrigin.ZodObject<any> {
+		// Copiar el schema original con safeExtend para preservar refines
+		let copySchema = schema.safeExtend({})
 
-    invisibleFields.forEach(fieldPath => {
-      const keys = fieldPath.split('.');
-      if (keys.length === 1) {
-        // Campo de nivel superior
-        const key = keys[0] as string;
-        copySchema = copySchema.omit({ [key]: true });
-      } else {
-        
-      }
-    });
+		invisibleFields.forEach((fieldPath) => {
+			const keys = fieldPath.split('.')
+			if (keys.length === 1) {
+				// Campo de nivel superior
+				const key = keys[0] as string
+				copySchema = copySchema.omit({ [key]: true })
+			} else {
+			}
+		})
 
-    if (copySchema && schema._def?.checks && Array.isArray((schema._def as any).checks) && (schema._def as any).checks.length > 0) {
-      for (const check of schema._def.checks) {
-        copySchema = copySchema.refine((check as any).def.fn,{message:(check as any).def.error(),path:(check as any).def.path})
-      }
-    }
-    return copySchema;
-  }
-
-
-
-  
+		if (copySchema && schema._def?.checks && Array.isArray((schema._def as any).checks) && (schema._def as any).checks.length > 0) {
+			for (const check of schema._def.checks) {
+				copySchema = copySchema.refine((check as any).def.fn, { message: (check as any).def.error(), path: (check as any).def.path })
+			}
+		}
+		return copySchema
+	}
 }

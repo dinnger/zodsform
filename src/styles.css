@@ -6,138 +6,144 @@
 /* ==================== CLARIFYJS STYLES ==================== */
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background: #f5f5f5;
-  padding: 20px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	line-height: 1.6;
+	color: #333;
+	background: #f5f5f5;
+	padding: 20px;
 }
 
 #root {
-  max-width: 900px;
-  margin: 0 auto;
+	max-width: 900px;
+	margin: 0 auto;
 }
 
 /* ==================== FORMULARIO ==================== */
 
 .clarifyjs-form {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	background: white;
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* ==================== GRID SYSTEM ==================== */
 
 .clarifyjs-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: 20px;
+	margin-bottom: 20px;
 }
 
 /* ==================== CAMPOS ==================== */
 
 .clarifyjs-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .clarifyjs-field label {
-  font-weight: 600;
-  font-size: 14px;
-  color: #374151;
+	font-weight: 600;
+	font-size: 14px;
+	color: #374151;
 }
 
 .clarifyjs-field label .required {
-  color: #ef4444;
-  margin-left: 2px;
+	color: #ef4444;
+	margin-left: 2px;
 }
-
 
 /* ==================== ERRORES ==================== */
 
 .clarifyjs-error {
-  font-size: 12px;
-  color: #ef4444;
-  min-height: 18px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+	font-size: 12px;
+	color: #ef4444;
+	min-height: 18px;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
 .clarifyjs-error.visible {
-  opacity: 1;
+	opacity: 1;
 }
 
 .clarifyjs-field.has-error input,
 .clarifyjs-field.has-error textarea,
 .clarifyjs-field.has-error select {
-  border-color: #ef4444;
+	border-color: #ef4444;
 }
 
 .clarifyjs-field.has-error input:focus,
 .clarifyjs-field.has-error textarea:focus,
 .clarifyjs-field.has-error select:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 /* ==================== SECCIONES Y BOXES ==================== */
 
 .clarifyjs-field[data-type="section"],
 .clarifyjs-field[data-type="box"] {
-  grid-column: 1 / -1;
+	grid-column: 1 / -1;
 }
 
 .clarifyjs-field[data-type="box"] {
-  background: #f9fafb;
-  padding: 20px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
+	background: #f9fafb;
+	padding: 20px;
+	border-radius: 6px;
+	border: 1px solid #e5e7eb;
 }
 
 .clarifyjs-section-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 15px 0;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e5e7eb;
+	font-size: 18px;
+	font-weight: 700;
+	color: #111827;
+	margin: 0 0 15px 0;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #e5e7eb;
 }
 
 .clarifyjs-field[data-type="box"] .clarifyjs-section-title {
-  font-size: 16px;
-  border-bottom: 1px solid #d1d5db;
+	font-size: 16px;
+	border-bottom: 1px solid #d1d5db;
 }
 
 /* ==================== RESPONSIVE ==================== */
 
 @media (max-width: 768px) {
-  .clarifyjs-grid {
-    grid-template-columns: 1fr;
-  }
+	.clarifyjs-grid {
+		grid-template-columns: 1fr;
+	}
 
-  .clarifyjs-field {
-    grid-column: 1 / -1 !important;
-  }
+	.clarifyjs-field {
+		grid-column: 1 / -1 !important;
+	}
 
-  .clarifyjs-form {
-    padding: 20px;
-  }
+	.clarifyjs-form {
+		padding: 20px;
+	}
 }
 
 /* ==================== ANIMACIONES ==================== */
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-5px);
+	}
+	75% {
+		transform: translateX(5px);
+	}
 }
 
 .clarifyjs-field.has-error {
-  animation: shake 0.3s ease;
+	animation: shake 0.3s ease;
 }
