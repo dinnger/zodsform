@@ -5,6 +5,23 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [0.1.9] - 2025-11-14
+
+### Arreglado
+- 🐛 **CSS de Tailwind ahora se incluye completamente compilado**: El paquete npm ahora incluye el CSS de Tailwind completamente procesado en `dist/styles.css`. Los usuarios ya NO necesitan instalar ni configurar Tailwind CSS en sus proyectos.
+
+### Añadido
+- ✅ Script de verificación automática (`verify:build`) que asegura que el CSS esté compilado antes de publicar
+- 📚 Guía completa de publicación (`PUBLISHING.md`) con checklist y troubleshooting
+
+### Cambiado
+- 📦 Actualizado `package.json` para incluir solo archivos necesarios en la distribución
+- 📝 Mejorada documentación de instalación en README aclarando que Tailwind NO es una dependencia del usuario
+- 🔧 Hook `prepublishOnly` ahora ejecuta verificación automática del CSS compilado
+
+### Removido
+- ❌ Removida `tailwindcss` de las instrucciones de instalación (ya no es necesaria para usuarios finales)
+
 ## [0.1.0] - 2025-11-12
 
 ### Añadido

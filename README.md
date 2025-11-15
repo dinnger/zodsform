@@ -33,10 +33,16 @@ Or with yarn:
 yarn add zodsform zod
 ```
 
-**Note**: CSS styles are included in the package. Just import them:
+**Note**: The CSS is pre-compiled and included in the package. **You don't need to install or configure Tailwind CSS** in your project. Just import the styles:
 
 ```typescript
 import 'zodsform/dist/styles.css'
+```
+
+Or in HTML:
+
+```html
+<link rel="stylesheet" href="node_modules/zodsform/dist/styles.css">
 ```
 
 ## 🚀 Quick Start
@@ -490,10 +496,41 @@ If you were using previous versions, here are the main changes:
 - ✅ **Improved components**: Clearer 3-level priority system
 - ⚠️ **Removed methods**: `labels` in config no longer exists, use `.label()` in schema
 
-## 📖 Additional Documentation
+## ❓ FAQ
+
+### Los estilos no se muestran después de instalar el paquete
+
+**Solución**: Asegúrate de importar el CSS en tu proyecto:
+
+```typescript
+import 'zodsform/dist/styles.css';
+```
+
+O en HTML:
+
+```html
+<link rel="stylesheet" href="node_modules/zodsform/dist/styles.css">
+```
+
+El CSS está **completamente pre-compilado** y listo para usar. No necesitas instalar ni configurar Tailwind CSS.
+
+### ¿Necesito instalar Tailwind CSS?
+
+**No**. El paquete `zodsform` incluye todos los estilos de Tailwind CSS pre-compilados en `dist/styles.css`. Solo necesitas instalar `zodsform` y `zod`.
+
+### ¿Puedo personalizar los estilos?
+
+Sí, de tres formas:
+
+1. **CSS personalizado**: Sobreescribe las clases de ZodsForm en tu propio CSS
+2. **Componentes personalizados**: Crea tus propios componentes con tu lógica de UI
+3. **Propiedades inline**: Usa `className` en `.properties()` para agregar clases personalizadas
+
+## � Additional Documentation
 
 - **[QUICKSTART.md](./QUICKSTART.md)**: 5-minute quick guide
 - **[CHANGELOG.md](./CHANGELOG.md)**: Change history
+- **[PUBLISHING.md](./PUBLISHING.md)**: Publishing guide for maintainers
 - **Demos**: See `src/demos.html` for interactive examples
 
 ## 👤 Author

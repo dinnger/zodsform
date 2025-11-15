@@ -1,0 +1,54 @@
+# Source files (ya compilados en dist/)
+src/
+tests/
+scripts/
+
+# Configuration files
+tsconfig.json
+tailwind.config.js
+postcss.config.js
+biome.json
+vitest.config.ts
+.github/
+
+# Development files
+*.test.ts
+*.test.js
+__screenshots__/
+
+# Build artifacts
+*.tsbuildinfo
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (keep only README.md and LICENSE)
+PUBLISHING.md
+QUICKSTART.md
+DEVELOPMENT.md
+.github/
+
+# Demos and examples (not needed in production)
+*.html
+
+# Test files
+playwright-report/
+test-results/
+
+# Package files
+*.tgz
