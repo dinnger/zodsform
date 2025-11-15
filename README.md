@@ -2,7 +2,7 @@
 
 **TypeScript library to create dynamic forms with automatic validation using Zod and Tailwind CSS**
 
-ZodsForm (formerly ClarifyJS) allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, Tailwind CSS styling, and a simple, intuitive API.
+ZodsForm allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, Tailwind CSS styling, and a simple, intuitive API.
 
 ![Form Preview](src/assets/img/form.png)
 
@@ -45,7 +45,7 @@ import 'zodsform/dist/styles.css'
 
 ```typescript
 import { z } from "zod";
-import { ClarifyJS } from "zodsform";
+import { ZodsForm } from "zodsform";
 import "zodsform/dist/styles.css";
 
 // Define your Zod schema with ZodsForm extensions
@@ -71,7 +71,7 @@ const userSchema = z.object({
 });
 
 // Create the form automatically with element selector
-const form = ClarifyJS.fromSchema(userSchema, {
+const form = ZodsForm.fromSchema(userSchema, {
   el: "#root", // CSS selector or DOM element where it will be mounted
   onSubmit: (data) => {
     console.log("Validated data:", data);
@@ -202,7 +202,7 @@ const addressSchema = z.object({
   }).label("Address"),  // 📦 Another box
 });
 
-const form = ClarifyJS.fromSchema(addressSchema, {
+const form = ZodsForm.fromSchema(addressSchema, {
   onSubmit: (data) => {
     console.log(data);
     // {
@@ -231,7 +231,7 @@ const customEnum = z.object({
   }).label("Country"),
 });
 
-const form = ClarifyJS.fromSchema(customEnum);
+const form = ZodsForm.fromSchema(customEnum);
 ```
 
 ### Form with Custom Validations
@@ -258,7 +258,7 @@ const schema = z.object({
 
 ## 🎛️ API
 
-### `ClarifyJS.fromSchema(schema, config)`
+### `ZodsForm.fromSchema(schema, config)`
 
 Creates a form from a Zod schema.
 
@@ -271,18 +271,18 @@ Creates a form from a Zod schema.
   - `onChange?`: Callback on each field change
   - `components?`: Custom components map
 
-**Returns:** ClarifyJS instance
+**Returns:** ZodsForm instance
 
 **Example:**
 ```typescript
-const form = ClarifyJS.fromSchema(mySchema, {
+const form = ZodsForm.fromSchema(mySchema, {
   el: "#app", // Automatically mounted on this element
   onSubmit: (data) => console.log(data),
 });
 form.render();
 ```
 
-### `new ClarifyJS(config, el?)`
+### `new ZodsForm(config, el?)`
 
 Creates a form from a JSON structure.
 
@@ -426,7 +426,7 @@ const schema = z.object({
 ### 2. Instance-level Components
 
 ```typescript
-const form = ClarifyJS.fromSchema(schema, {
+const form = ZodsForm.fromSchema(schema, {
   components: {
     boolean: MyCustomToggle,      // By type
     acceptTerms: StyledCheckbox,  // By field name
@@ -438,10 +438,10 @@ const form = ClarifyJS.fromSchema(schema, {
 ### 3. Global Components
 
 ```typescript
-import { ClarifyJS } from "zodsform";
+import { ZodsForm } from "zodsform";
 
 // In your main.ts or index.ts
-ClarifyJS.registerComponents({
+ZodsForm.registerComponents({
   boolean: ToggleSwitch,  // All booleans use toggle
 });
 ```
@@ -489,7 +489,6 @@ If you were using previous versions, here are the main changes:
 - ✅ **Improved masks**: Support for regex in addition to string patterns
 - ✅ **Improved components**: Clearer 3-level priority system
 - ⚠️ **Removed methods**: `labels` in config no longer exists, use `.label()` in schema
-- ⚠️ **Name change**: Package changed from `clarifyjs` to `zodsform`
 
 ## 📖 Additional Documentation
 
