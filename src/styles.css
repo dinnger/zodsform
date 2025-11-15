@@ -1,9 +1,4 @@
-/* ==================== TAILWIND BASE ==================== */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* ==================== zodsForm STYLES ==================== */
+/* ==================== zodsForm STYLES - CSS PURO ==================== */
 
 * {
 	box-sizing: border-box;
@@ -59,6 +54,110 @@ body {
 	margin-left: 2px;
 }
 
+/* Descripción de campo */
+.zodsForm-description {
+	font-size: 12px;
+	color: #6b7280;
+}
+
+/* ==================== INPUTS ==================== */
+
+.zodsForm-input,
+.zodsForm-select,
+.zodsForm-textarea {
+	width: 100%;
+	padding: 10px 12px;
+	font-size: 14px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	background-color: white;
+	color: #111827;
+	transition: all 0.2s ease;
+}
+
+.zodsForm-input:focus,
+.zodsForm-select:focus,
+.zodsForm-textarea:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.zodsForm-input:disabled,
+.zodsForm-select:disabled,
+.zodsForm-textarea:disabled {
+	background-color: #f3f4f6;
+	color: #9ca3af;
+	cursor: not-allowed;
+}
+
+.zodsForm-textarea {
+	min-height: 100px;
+	resize: vertical;
+}
+
+/* ==================== CHECKBOX ==================== */
+
+.zodsForm-checkbox-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.zodsForm-checkbox {
+	width: 18px;
+	height: 18px;
+	border: 2px solid #d1d5db;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.zodsForm-checkbox:checked {
+	background-color: #3b82f6;
+	border-color: #3b82f6;
+}
+
+.zodsForm-checkbox:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.zodsForm-checkbox-label {
+	font-size: 14px;
+	color: #374151;
+	cursor: pointer;
+}
+
+/* ==================== PASSWORD INPUT ==================== */
+
+.zodsForm-password-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.zodsForm-password-toggle {
+	position: absolute;
+	right: 10px;
+	background: none;
+	border: none;
+	color: #6b7280;
+	cursor: pointer;
+	padding: 5px;
+	font-size: 14px;
+	transition: color 0.2s ease;
+}
+
+.zodsForm-password-toggle:hover {
+	color: #374151;
+}
+
+.zodsForm-password-toggle:focus {
+	outline: none;
+	color: #3b82f6;
+}
+
 /* ==================== ERRORES ==================== */
 
 .zodsForm-error {
@@ -73,15 +172,15 @@ body {
 	opacity: 1;
 }
 
-.zodsForm-field.has-error input,
-.zodsForm-field.has-error textarea,
-.zodsForm-field.has-error select {
+.zodsForm-field.has-error .zodsForm-input,
+.zodsForm-field.has-error .zodsForm-textarea,
+.zodsForm-field.has-error .zodsForm-select {
 	border-color: #ef4444;
 }
 
-.zodsForm-field.has-error input:focus,
-.zodsForm-field.has-error textarea:focus,
-.zodsForm-field.has-error select:focus {
+.zodsForm-field.has-error .zodsForm-input:focus,
+.zodsForm-field.has-error .zodsForm-textarea:focus,
+.zodsForm-field.has-error .zodsForm-select:focus {
 	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
@@ -111,6 +210,131 @@ body {
 .zodsForm-field[data-type="box"] .zodsForm-section-title {
 	font-size: 16px;
 	border-bottom: 1px solid #d1d5db;
+}
+
+/* ==================== BOTONES ==================== */
+
+.zodsForm-submit-btn {
+	padding: 12px 24px;
+	font-size: 16px;
+	font-weight: 600;
+	color: white;
+	background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.zodsForm-submit-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.zodsForm-submit-btn:active {
+	transform: translateY(0);
+}
+
+.zodsForm-submit-btn:disabled {
+	background: #9ca3af;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* ==================== TOGGLE SWITCH (Custom Component) ==================== */
+
+.zodsForm-toggle-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.zodsForm-toggle {
+	position: relative;
+	width: 44px;
+	height: 24px;
+	background-color: #d1d5db;
+	border-radius: 9999px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.zodsForm-toggle:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.zodsForm-toggle.checked {
+	background-color: #3b82f6;
+}
+
+.zodsForm-toggle-circle {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	background-color: white;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+}
+
+.zodsForm-toggle.checked .zodsForm-toggle-circle {
+	transform: translateX(20px);
+}
+
+.zodsForm-toggle-label {
+	font-size: 14px;
+	font-weight: 500;
+	color: #374151;
+}
+
+/* ==================== STYLED CHECKBOX (Custom Component) ==================== */
+
+.zodsForm-styled-checkbox-wrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+.zodsForm-styled-checkbox {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.zodsForm-styled-checkbox-box {
+	width: 24px;
+	height: 24px;
+	border: 2px solid #d1d5db;
+	border-radius: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.zodsForm-styled-checkbox:checked + .zodsForm-styled-checkbox-box {
+	background-color: #3b82f6;
+	border-color: #3b82f6;
+}
+
+.zodsForm-styled-checkbox:focus + .zodsForm-styled-checkbox-box {
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.zodsForm-styled-checkbox-check {
+	color: white;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.zodsForm-styled-checkbox:checked + .zodsForm-styled-checkbox-box .zodsForm-styled-checkbox-check {
+	opacity: 1;
 }
 
 /* ==================== RESPONSIVE ==================== */

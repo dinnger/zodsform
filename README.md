@@ -33,7 +33,7 @@ Or with yarn:
 yarn add zodsform zod
 ```
 
-**Note**: The CSS is pre-compiled and included in the package. **You don't need to install or configure Tailwind CSS** in your project. Just import the styles:
+**Note**: ZodsForm uses **pure CSS** (no CSS frameworks required). Just import the styles:
 
 ```typescript
 import 'zodsform/dist/styles.css'
@@ -44,6 +44,8 @@ Or in HTML:
 ```html
 <link rel="stylesheet" href="node_modules/zodsform/dist/styles.css">
 ```
+
+**No additional dependencies or build tools needed!** The CSS file is ready to use out of the box.
 
 ## 🚀 Quick Start
 
@@ -512,11 +514,11 @@ O en HTML:
 <link rel="stylesheet" href="node_modules/zodsform/dist/styles.css">
 ```
 
-El CSS está **completamente pre-compilado** y listo para usar. No necesitas instalar ni configurar Tailwind CSS.
+El CSS está **listo para usar** sin necesidad de herramientas de build adicionales.
 
-### ¿Necesito instalar Tailwind CSS?
+### ¿Necesito instalar algún framework CSS?
 
-**No**. El paquete `zodsform` incluye todos los estilos de Tailwind CSS pre-compilados en `dist/styles.css`. Solo necesitas instalar `zodsform` y `zod`.
+**No**. ZodsForm usa **CSS puro** sin dependencias externas. Todo está incluido en el archivo `dist/styles.css`. Solo necesitas instalar `zodsform` y `zod`.
 
 ### ¿Puedo personalizar los estilos?
 

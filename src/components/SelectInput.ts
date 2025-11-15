@@ -4,28 +4,11 @@ import type { ComponentConfig, RenderConfig } from '../interface'
  * Componente de Select (dropdown)
  */
 export const SelectInput: ComponentConfig = {
-	baseClasses: [
-		'w-full',
-		'px-3',
-		'py-2',
-		'border-2',
-		'border-gray-300',
-		'rounded-md',
-		'text-sm',
-		'font-inherit',
-		'transition-all',
-		'focus:outline-none',
-		'focus:border-blue-500',
-		'focus:ring-2',
-		'focus:ring-blue-100',
-		'cursor-pointer'
-	],
-
 	render: (config: RenderConfig) => {
 		const select = document.createElement('select')
 		select.id = config.fieldPath
 		select.name = config.fieldPath
-		select.classList.add(...(SelectInput.baseClasses || []))
+		select.classList.add('zodsForm-select')
 
 		if (config.required) {
 			select.required = true
@@ -33,7 +16,6 @@ export const SelectInput: ComponentConfig = {
 
 		if (config.properties?.disabled) {
 			select.disabled = true
-			select.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-60')
 		}
 
 		if (config.properties?.options) {

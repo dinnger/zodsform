@@ -8,21 +8,13 @@ export class DOMHelper {
 	static showFieldError(container: HTMLElement, fieldPath: string, errors: string[]): void {
 		const errorContainer = container.querySelector(`[data-error-for="${fieldPath}"]`)
 		const field = container.querySelector(`[data-field="${fieldPath}"]`)
-		const input = container.querySelector(`[name="${fieldPath}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 
 		if (errorContainer) {
 			errorContainer.textContent = errors.join(', ')
-			errorContainer.classList.remove('opacity-0')
-			errorContainer.classList.add('opacity-100')
+			errorContainer.classList.add('visible')
 		}
 
 		field?.classList.add('has-error')
-
-		// Añadir clases de error al input
-		if (input && !input.classList.contains('w-auto')) {
-			input.classList.remove('border-gray-300', 'focus:border-blue-500', 'focus:ring-blue-100')
-			input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-100')
-		}
 	}
 
 	/**
@@ -31,21 +23,13 @@ export class DOMHelper {
 	static clearFieldError(container: HTMLElement, fieldPath: string): void {
 		const errorContainer = container.querySelector(`[data-error-for="${fieldPath}"]`)
 		const field = container.querySelector(`[data-field="${fieldPath}"]`)
-		const input = container.querySelector(`[name="${fieldPath}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 
 		if (errorContainer) {
 			errorContainer.textContent = ''
-			errorContainer.classList.remove('opacity-100')
-			errorContainer.classList.add('opacity-0')
+			errorContainer.classList.remove('visible')
 		}
 
 		field?.classList.remove('has-error')
-
-		// Restaurar clases normales al input
-		if (input && !input.classList.contains('w-auto')) {
-			input.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-100')
-			input.classList.add('border-gray-300', 'focus:border-blue-500', 'focus:ring-blue-100')
-		}
 	}
 
 	/**
@@ -57,20 +41,13 @@ export class DOMHelper {
 			const fieldPath = err.path.join('.')
 			const errorContainer = container.querySelector(`[data-error-for="${fieldPath}"]`)
 			const field = container.querySelector(`[data-field="${fieldPath}"]`)
-			const input = container.querySelector(`[name="${fieldPath}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 
 			if (errorContainer) {
 				errorContainer.textContent = err.message
-				errorContainer.classList.remove('opacity-0')
-				errorContainer.classList.add('opacity-100')
+				errorContainer.classList.add('visible')
 			}
 
 			field?.classList.add('has-error')
-
-			if (input && !input.classList.contains('w-auto')) {
-				input.classList.remove('border-gray-300', 'focus:border-blue-500', 'focus:ring-blue-100')
-				input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-100')
-			}
 		})
 	}
 
@@ -103,10 +80,8 @@ export class DOMHelper {
 				if (input) {
 					if (value) {
 						input.setAttribute('disabled', 'true')
-						input.classList.add('opacity-50', 'cursor-not-allowed')
 					} else {
 						input.removeAttribute('disabled')
-						input.classList.remove('opacity-50', 'cursor-not-allowed')
 					}
 				}
 				break

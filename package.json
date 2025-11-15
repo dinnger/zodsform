@@ -1,6 +1,6 @@
 {
   "name": "zodsform",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Generador de formularios dinámicos con validación automática usando Zod",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -12,17 +12,14 @@
     "LICENSE"
   ],
   "scripts": {
-    "build:css": "npx tailwindcss -i src/styles.css -o dist/styles.css --minify",
+    "build:css": "cp src/styles.css dist/styles.css",
     "build:ts": "tsc",
-    "build": "npm run build:css && npm run build:ts",
-    "dev:css": "npx tailwindcss -i src/styles.css -o dist/styles.css --watch",
+    "build": "npm run build:ts && npm run build:css",
     "dev:ts": "tsc --watch",
-    "dev": "npm run build:css && npm run dev:ts",
+    "dev": "npm run dev:ts",
     "start": "node dist/index.js",
     "test": "vitest",
-    "test:ui": "vitest --ui",
-    "verify:build": "node scripts/verify-build.js",
-    "prepublishOnly": "npm run build && npm run verify:build"
+    "test:ui": "vitest --ui"
   },
   "repository": {
     "type": "git",
@@ -38,8 +35,8 @@
     "form-builder",
     "schema-validation",
     "form-generator",
-    "tailwindcss",
-    "tailwind"
+    "css",
+    "form-validation"
   ],
   "author": "Dinnger",
   "license": "ISC",
@@ -56,15 +53,11 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.5",
     "@playwright/test": "^1.56.1",
-    "@tailwindcss/cli": "^4.1.17",
-    "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@vitest/browser": "^4.0.8",
     "@vitest/browser-playwright": "^4.0.8",
     "autoprefixer": "^10.4.22",
     "playwright": "^1.56.1",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
   }

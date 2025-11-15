@@ -105,7 +105,7 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 	 */
 	render(): HTMLElement {
 		this.container.innerHTML = ''
-		this.container.classList.add('zodsForm-form', 'bg-white', 'p-8', 'rounded-lg', 'shadow-lg')
+		this.container.classList.add('zodsForm-form')
 		const fieldsContainer = this.renderStructure(this.structure)
 		this.container.appendChild(fieldsContainer)
 
@@ -164,16 +164,7 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		if (item.type === 'section' || item.type === 'box') {
 			if (item.label) {
 				const title = document.createElement('h3')
-				title.classList.add(
-					'zodsForm-section-title',
-					'text-lg',
-					'font-bold',
-					'text-gray-900',
-					'mb-4',
-					'pb-2',
-					'border-b-2',
-					'border-gray-200'
-				)
+				title.classList.add('zodsForm-section-title')
 				title.textContent = item.label
 				wrapper.appendChild(title)
 			}
@@ -190,11 +181,10 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		if (item.label) {
 			const label = document.createElement('label')
 			label.htmlFor = fieldPath
-			label.classList.add('font-semibold', 'text-sm', 'text-gray-700')
 			label.textContent = item.label
 			if (item.required) {
 				const requiredSpan = document.createElement('span')
-				requiredSpan.classList.add('required', 'text-red-500', 'ml-0.5')
+				requiredSpan.classList.add('required')
 				requiredSpan.textContent = '*'
 				label.appendChild(requiredSpan)
 			}
@@ -208,14 +198,14 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		// Descripción
 		if (item.description) {
 			const desc = document.createElement('small')
-			desc.classList.add('zodsForm-description', 'text-xs', 'text-gray-600')
+			desc.classList.add('zodsForm-description')
 			desc.textContent = item.description
 			wrapper.appendChild(desc)
 		}
 
 		// Error container
 		const errorContainer = document.createElement('div')
-		errorContainer.classList.add('zodsForm-error', 'text-xs', 'text-red-500', 'min-h-[18px]', 'opacity-0', 'transition-opacity')
+		errorContainer.classList.add('zodsForm-error')
 		errorContainer.setAttribute('data-error-for', fieldPath)
 		wrapper.appendChild(errorContainer)
 
