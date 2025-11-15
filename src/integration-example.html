@@ -171,7 +171,7 @@
       },
 
       // Callback mientras el usuario escribe
-      onChange: (data, errors) => {
+      onChange: ({ data, errors }) => {
         console.log("📝 Cambio detectado:", data);
         console.log("❌ Errores actuales:", errors);
 
@@ -181,7 +181,7 @@
       },
 
       // Callback cuando se envía el formulario
-      onSubmit: async (data) => {
+      onSubmit: async ({ data }) => {
         console.log("🚀 Formulario enviado con datos:", data);
 
         // Mostrar loading

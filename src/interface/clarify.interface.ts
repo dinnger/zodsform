@@ -1,5 +1,5 @@
-import type { z } from 'zod'
 import type { ComponentConfig, ZodTypeAny } from './index'
+import type { FieldPaths, InferSchemaType, zodOrigin } from './zod.interface'
 
 // ==================== TIPOS ====================
 type Structure = {
@@ -7,7 +7,7 @@ type Structure = {
 }
 
 interface StructureItem {
-	type: 'text' | 'number' | 'email' | 'password' | 'textarea' | 'select' | 'boolean' | 'section' | 'box'
+	type: 'text' | 'number' | 'email' | 'password' | 'textarea' | 'select' | 'boolean' | 'section' | 'box' | 'array'
 	label?: string
 	placeholder?: string
 	description?: string
@@ -29,12 +29,19 @@ interface StructureItem {
 	validation?: ZodTypeAny
 }
 
-interface FormConfig {
+interface FormConfig<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<any>> {
 	structure: Structure
-	schema?: z.ZodObject<any> | undefined
-	onSubmit?: ((data: any) => void) | undefined
-	onChange?: ((data: any, errors: any) => void) | undefined
-	onValidate?: ((isValid: boolean, data: any, errors: any) => void) | undefined
+	schema?: TSchema | undefined
+	onSubmit?: ((params: { data: any }) => void) | undefined
+	onChange?:
+		| ((params: {
+				fieldPath: TSchema extends zodOrigin.ZodObject<any> ? FieldPaths<InferSchemaType<TSchema>> : string
+				data: any
+				errors: any
+				arrayIndex?: number
+		  }) => void)
+		| undefined
+	onValidate?: ((params: { isValid: boolean; data: any; errors: any }) => void) | undefined
 	components?: Record<string, ComponentConfig> | undefined
 }
 

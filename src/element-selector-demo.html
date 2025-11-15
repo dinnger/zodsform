@@ -100,8 +100,8 @@
     // FORMULARIO 1: Con selector CSS string
     const form1 = ZodsForm.fromSchema(contactSchema, {
       el: "#form-1", // Selector CSS
-      onSubmit: (data) => handleSubmit(data, 1),
-      onChange: (data, errors) => {
+      onSubmit: ({ data }) => handleSubmit(data, 1),
+      onChange: ({ data, errors }) => {
         console.log("Form 1 - Datos:", data, "Errores:", errors);
       },
     });
@@ -111,8 +111,8 @@
     const form2Element = document.getElementById("form-2");
     const form2 = ZodsForm.fromSchema(contactSchema, {
       el: form2Element, // Elemento DOM
-      onSubmit: (data) => handleSubmit(data, 2),
-      onChange: (data, errors) => {
+      onSubmit: ({ data }) => handleSubmit(data, 2),
+      onChange: ({ data, errors }) => {
         console.log("Form 2 - Datos:", data, "Errores:", errors);
       },
     });
@@ -121,8 +121,8 @@
     // FORMULARIO 3: Montaje manual (método tradicional)
     const form3 = ZodsForm.fromSchema(contactSchema, {
       // Sin especificar 'el'
-      onSubmit: (data) => handleSubmit(data, 3),
-      onChange: (data, errors) => {
+      onSubmit: ({ data }) => handleSubmit(data, 3),
+      onChange: ({ data, errors }) => {
         console.log("Form 3 - Datos:", data, "Errores:", errors);
       },
     });

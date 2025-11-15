@@ -11,7 +11,8 @@ ZodsForm allows you to create complete HTML forms from Zod schemas or JSON struc
 - 🎯 **Auto-generation from Zod**: Convert Zod schemas into functional forms
 - ✅ **Real-time validation**: Validation while user types and on blur
 - 🔄 **Nested field support**: Objects and complex structures with dot-notation
-- 📦 **Native TypeScript**: Full typing and autocomplete
+- � **Array support**: Dynamic arrays with add/remove controls and element-level validation
+- �📦 **Native TypeScript**: Full typing and autocomplete
 - 🎭 **Input masks**: Automatic formatting (phone, credit card, ZIP, etc.) with string or regex
 - 🔐 **Password fields**: With automatic show/hide toggle
 - 🎨 **Custom components**: 3-level system (global, instance, field)
@@ -80,15 +81,20 @@ const userSchema = z.object({
 // Create the form automatically with element selector
 const form = ZodsForm.fromSchema(userSchema, {
   el: "#root", // CSS selector or DOM element where it will be mounted
-  onSubmit: (data) => {
+  onSubmit: ({ data }) => {
     console.log("Validated data:", data);
     // Send to your API
   },
-  onChange: (data, errors) => {
+  onChange: ({ fieldPath, data, errors, arrayIndex }) => {
+    // 🎯 fieldPath has strong typing based on schema!
+    // Autocomplete: "email" | "password" | "age" | "security.password"
+    // arrayIndex indicates which array element changed (if applicable)
+    console.log("Field changed:", fieldPath);
+    console.log("Array index:", arrayIndex); // undefined for non-array fields
     console.log("Current data:", data);
     console.log("Errors:", errors);
   },
-  onValidate: (isValid, data, errors) => {
+  onValidate: ({ isValid, data, errors }) => {
     console.log("Form valid:", isValid);
   }
 });
@@ -185,6 +191,7 @@ ZodsForm extends Zod with chainable methods to configure fields:
 | `textarea` | Text area | `z.string()` (long) |
 | `select` | Dropdown selector | `z.enum(["a", "b"])` or `z.enum({ a: "A", b: "B" })` |
 | `checkbox` | Checkbox | `z.boolean()` |
+| `array` | Dynamic array with controls | `z.array(z.object({...}))` |
 | `section` | Visual container | - |
 | `box` | Bordered container | `z.object({...}).label("Title")` |
 
@@ -263,6 +270,59 @@ const schema = z.object({
 });
 ```
 
+### Form with Arrays
+
+```typescript
+const securitySchema = z.object({
+  security: z.array(
+    z.object({
+      password: z.string()
+        .min(8, "Minimum 8 characters")
+        .label("Password")
+        .password(),
+      
+      confirmPassword: z.string()
+        .label("Confirm Password")
+        .password(),
+    })
+  ).label("Security Credentials")
+  .min(1, "At least one set of credentials is required"),
+})
+.refine((data) => {
+  // Validate that passwords match in all array elements
+  return data.security.every(item => item.password === item.confirmPassword);
+}, {
+  message: "Passwords do not match",
+  path: ["security", 0, "confirmPassword"],  // Error shown on first element
+});
+
+const form = ZodsForm.fromSchema(securitySchema, {
+  onChange: ({ fieldPath, data, arrayIndex }) => {
+    // arrayIndex indicates which array element changed
+    if (arrayIndex !== undefined) {
+      console.log(`Field ${fieldPath} changed in array element ${arrayIndex}`);
+    }
+  },
+  onSubmit: ({ data }) => {
+    console.log(data);
+    // {
+    //   security: [
+    //     { password: "...", confirmPassword: "..." },
+    //     { password: "...", confirmPassword: "..." }
+    //   ]
+    // }
+  }
+});
+```
+
+**Array Features:**
+- ➕ **Add button**: "+ Agregar" button to add new elements
+- ✕ **Remove button**: Each element has a remove button
+- 🛡️ **Smart deletion**: If only one element remains, it clears the data instead of removing the element
+- ✅ **Independent validation**: Each array element validates independently
+- 🎯 **Element tracking**: `arrayIndex` parameter in `onChange` callback to identify which element changed
+- 🔍 **Cross-field validation**: `refine()` works correctly with array elements
+
 ## 🎛️ API
 
 ### `ZodsForm.fromSchema(schema, config)`
@@ -273,9 +333,11 @@ Creates a form from a Zod schema.
 - `schema`: Zod schema (ZodObject)
 - `config`:
   - `el?`: CSS selector (string) or DOM element where to mount the form
-  - `onValidate?`: Callback when the form is validated
-  - `onSubmit?`: Callback when the form is submitted
-  - `onChange?`: Callback on each field change
+  - `onValidate?`: Callback when the form is validated `({ isValid, data, errors }) => void`
+  - `onSubmit?`: Callback when the form is submitted `({ data }) => void`
+  - `onChange?`: Callback on each field change `({ fieldPath, data, errors, arrayIndex }) => void`
+    - `fieldPath` has **strong typing** based on schema structure (includes array element properties!)
+    - `arrayIndex?` is a number indicating which array element changed (undefined for non-array fields)
   - `components?`: Custom components map
 
 **Returns:** ZodsForm instance
@@ -284,7 +346,14 @@ Creates a form from a Zod schema.
 ```typescript
 const form = ZodsForm.fromSchema(mySchema, {
   el: "#app", // Automatically mounted on this element
-  onSubmit: (data) => console.log(data),
+  onSubmit: ({ data }) => console.log(data),
+  onChange: ({ fieldPath, data, errors, arrayIndex }) => {
+    // fieldPath has autocomplete: "email" | "password" | "nested.field" | "array.property"
+    console.log('Changed:', fieldPath);
+    if (arrayIndex !== undefined) {
+      console.log('Array element index:', arrayIndex);
+    }
+  }
 });
 form.render();
 ```
@@ -296,9 +365,9 @@ Creates a form from a JSON structure.
 **Parameters:**
 - `config.structure`: Form structure
 - `config.schema?`: Optional Zod schema for full validation
-- `config.onSubmit?`: Submit callback
-- `config.onChange?`: Change callback
-- `config.onValidate?`: Validate callback
+- `config.onSubmit?`: Submit callback `({ data }) => void`
+- `config.onChange?`: Change callback `({ fieldPath, data, errors, arrayIndex }) => void`
+- `config.onValidate?`: Validate callback `({ isValid, data, errors }) => void`
 - `config.components?`: Custom components map
 - `el?`: CSS selector or DOM element (optional)
 

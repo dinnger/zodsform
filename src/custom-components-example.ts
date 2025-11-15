@@ -42,19 +42,19 @@ export function customComponentsExample() {
 			boolean: ToggleSwitch, // Todos los booleanos usarán toggle por defecto
 			acceptTerms: StyledCheckbox // Campo específico usa checkbox estilizado
 		},
-		onValidate: (isValid) => {
+		onValidate: ({ isValid }) => {
 			console.log('🔍 Componentes personalizados - Válido:', isValid)
 			if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Datos con componentes personalizados:', data)
 			alert('¡Formulario enviado! Ver consola.')
 		},
-		onChange: (data, error) => {
+		onChange: ({ data, errors }) => {
 			console.log('📝 Cambio detectado:', data)
-			console.log('📝 Errores detectados:', error)
+			console.log('📝 Errores detectados:', errors)
 		}
 	})
 }

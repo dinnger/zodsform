@@ -7,6 +7,22 @@ export class StructureUtil {
 	/**
 	 * Obtiene un item de la estructura usando un path con puntos
 	 */
+	static setField(form: Record<string, any>, fieldPath: string, value: any): boolean {
+		const keys = fieldPath.split('.')
+		let current: Record<string, any> | undefined = form
+		for (const [index, key] of keys.entries()) {
+			// Si no lo encuentra, crear un objeto vacío
+			if (!current?.[key]) {
+				if (current) current[key] = index === keys.length - 1 ? value : {}
+			}
+			if (current) current = current[key]
+		}
+		return true
+	}
+
+	/**
+	 * Obtiene un item de la estructura usando un path con puntos
+	 */
 	static getItem(structure: Structure, fieldPath: string): StructureItem | null {
 		const keys = fieldPath.split('.')
 		let current: Structure | StructureItem | undefined = structure

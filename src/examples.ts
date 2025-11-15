@@ -8,10 +8,12 @@ export function registrationFormExample() {
 			lastName: z.string().min(2, 'Mínimo 2 caracteres').label('Last Name').properties({ size: 6 }).optional(),
 			email: z.string().email('Email inválido').label('Email'),
 			security: z
-				.object({
-					password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').label('Password').password(),
-					confirmPassword: z.string().label('Confirm Password').password()
-				})
+				.array(
+					z.object({
+						password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').label('Password').password(),
+						confirmPassword: z.string().label('Confirm Password').password()
+					})
+				)
 				.label('Security'),
 			country: z.enum({ mx: 'Mexico', us: 'USA', es: 'Spain', ar: 'Argentina' }).label('Country'),
 			zipCode: z.string().length(5, 'Zip code must be 5 digits').label('Zip Code').properties({ mask: '#####' }),
@@ -27,13 +29,13 @@ export function registrationFormExample() {
 				}),
 			age: z.number().min(18, 'Debes ser mayor de edad').max(120).label('Age').properties({ visible: false })
 		})
-		.refine((data) => data.security.password === data.security.confirmPassword, {
+		.refine((data) => data.security?.[0]?.password === data.security?.[0]?.confirmPassword, {
 			message: 'Las contraseñas no coinciden',
-			path: ['security.confirmPassword']
+			path: ['security', 0, 'confirmPassword']
 		})
 
 	const form = ZodsForm.fromSchema(registrationSchema, {
-		onValidate: (isValid, _data, _errors) => {
+		onValidate: ({ isValid }) => {
 			// Este callback se puede usar con frameworks reactivos
 			// Vue: ref(isValid) / React: setState(isValid) / Angular: signal(isValid)
 			// console.log("🔍 Validación ejecutada:", { isValid, data, errors });
@@ -48,21 +50,33 @@ export function registrationFormExample() {
 			// React: setFormValid(isValid)
 			// Angular: formValidSignal.set(isValid)
 		},
-		onChange: (data, _errors) => {
-			// console.log("Cambio detectado:", { data, errors });
+		onChange: ({ fieldPath, data, arrayIndex }) => {
+			// console.log("Cambio detectado:", { fieldPath, data, arrayIndex });
+
+			// El arrayIndex indica qué elemento del array cambió (si aplica)
+			// Por ejemplo, si cambió security[0].password, arrayIndex será 0
+			// Si cambió security[1].password, arrayIndex será 1
+			if (arrayIndex !== undefined) {
+				console.log(`Campo ${fieldPath} cambió en el elemento ${arrayIndex} del array`)
+			}
 
 			// Mostrar/ocultar campo age según firstName tenga valor
-			if (data.firstName && data.firstName !== '') {
-				form.setFieldProperty('age', 'visible', true)
-			} else {
-				form.setFieldProperty('age', 'visible', false)
+			if (fieldPath === 'firstName') {
+				if (data.firstName && data.firstName !== '') {
+					form.setFieldProperty({ fieldPath: 'age', property: 'visible', value: true })
+					form.setData({ fieldPath: 'age', value: 99 })
+				} else {
+					form.setFieldProperty({ fieldPath: 'age', property: 'visible', value: false })
+				}
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Registro exitoso:', data)
 			alert('¡Registro exitoso! Ver consola.')
 		}
 	})
+
+	form.setData({ fieldPath: 'firstName', value: 'Juan' })
 
 	return form
 }
@@ -84,7 +98,7 @@ export function addressFormExample() {
 	})
 
 	const form = ZodsForm.fromSchema(addressSchema, {
-		onValidate: (isValid, _data, errors) => {
+		onValidate: ({ isValid, errors }) => {
 			console.log('🔍 Estado de validación:', isValid ? '✅ Válido' : '❌ Inválido')
 			if (!isValid) {
 				console.log('Errores encontrados:', errors)
@@ -94,26 +108,26 @@ export function addressFormExample() {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onChange: (data, errors) => {
+		onChange: ({ data, errors }) => {
 			console.log('Cambio detectado:', { data, errors })
 
 			// Mostrar/ocultar campo número según fullName tenga valor
 			if (data.fullName && data.fullName !== '') {
-				form.setFieldProperty('address.number', 'visible', true)
-				form.setFieldProperty('address.street', 'size', 6) // Reducir tamaño de street
+				form.setFieldProperty({ fieldPath: 'address.number', property: 'visible', value: true })
+				form.setFieldProperty({ fieldPath: 'address.street', property: 'size', value: 6 }) // Reducir tamaño de street
 			} else {
-				form.setFieldProperty('address.number', 'visible', false)
-				form.setFieldProperty('address.street', 'size', 12) // Full width cuando number está oculto
+				form.setFieldProperty({ fieldPath: 'address.number', property: 'visible', value: false })
+				form.setFieldProperty({ fieldPath: 'address.street', property: 'size', value: 12 }) // Full width cuando number está oculto
 			}
 
 			// Deshabilitar zipCode si no hay ciudad
 			if (data.address?.city) {
-				form.setFieldProperty('address.zipCode', 'disabled', false)
+				form.setFieldProperty({ fieldPath: 'address.zipCode', property: 'disabled', value: false })
 			} else {
-				form.setFieldProperty('address.zipCode', 'disabled', true)
+				form.setFieldProperty({ fieldPath: 'address.zipCode', property: 'disabled', value: true })
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Dirección guardada:', data)
 			alert('¡Dirección guardada! Ver consola.')
 		}
@@ -134,7 +148,7 @@ export function productFormExample() {
 	})
 
 	return ZodsForm.fromSchema(productSchema, {
-		onValidate: (isValid) => {
+		onValidate: ({ isValid }) => {
 			// Signal simple para frameworks reactivos
 			console.log('🔍 Formulario válido:', isValid)
 			// Actualizar el estado del botón de submit
@@ -142,7 +156,7 @@ export function productFormExample() {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Producto creado:', data)
 			alert('¡Producto creado! Ver consola.')
 		}
@@ -173,18 +187,18 @@ export function userProfileExample() {
 	})
 
 	return ZodsForm.fromSchema(profileSchema, {
-		onValidate: (isValid) => {
+		onValidate: ({ isValid }) => {
 			console.log('🔍 Perfil válido:', isValid)
 			// Actualizar el estado del botón de submit
 			if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Perfil actualizado:', data)
 			alert('¡Perfil actualizado! Ver consola.')
 		},
-		onChange: (data, errors) => {
+		onChange: ({ data, errors }) => {
 			console.log('Cambio detectado:', { data, errors })
 		}
 	})
@@ -214,14 +228,14 @@ export function customValidationExample() {
 	})
 
 	return ZodsForm.fromSchema(customSchema, {
-		onValidate: (isValid) => {
+		onValidate: ({ isValid }) => {
 			console.log('🔍 Validaciones custom:', isValid ? '✅ Todas pasaron' : '❌ Hay errores')
 			// Actualizar el estado del botón de submit
 			if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Validación exitosa:', data)
 			alert('¡Todas las validaciones pasaron! Ver consola.')
 		}
@@ -257,13 +271,13 @@ export function masksExample() {
 	})
 
 	return ZodsForm.fromSchema(masksSchema, {
-		onValidate: (isValid) => {
+		onValidate: ({ isValid }) => {
 			console.log('🔍 Máscaras válidas:', isValid)
 			if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {
 				;(window as any).updateSubmitButton(isValid)
 			}
 		},
-		onSubmit: (data) => {
+		onSubmit: ({ data }) => {
 			console.log('✅ Datos con máscaras:', data)
 			alert('¡Datos enviados! Ver consola.')
 		}

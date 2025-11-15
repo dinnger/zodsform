@@ -9,9 +9,17 @@ class ZodExtractor {
 	static extractValidationInfo(zodSchema: ZodTypeAny): any {
 		const _def = (zodSchema as any)._def
 
+		// Validar que _def existe
+		if (!_def) {
+			return { type: 'text', required: false }
+		}
+
 		if (zodSchema instanceof z.ZodOptional) {
-			;(zodSchema as any)._def.innerType._def.optional = true
-			return ZodExtractor.extractValidationInfo(_def.innerType)
+			const innerType = _def.innerType
+			if (innerType && (innerType as any)._def) {
+				;(innerType as any)._def.optional = true
+			}
+			return ZodExtractor.extractValidationInfo(innerType)
 		}
 
 		// ZodUnion - extraer el primer tipo válido que no sea literal vacío
@@ -100,6 +108,12 @@ class ZodExtractor {
 			}
 		}
 
+		// ZodArray
+		if (zodSchema instanceof z.ZodArray) {
+			info.type = 'array'
+			info.element = _def.element
+		}
+
 		// ZodObject (para objetos anidados)
 		if (zodSchema instanceof z.ZodObject) {
 			info.shape = _def.shape
@@ -167,13 +181,24 @@ class ZodExtractor {
 				item.children = ZodExtractor.schemaToStructure(z.object(validationInfo.shape))
 			}
 
+			// Array
+			if (validationInfo.type === 'array') {
+				item.type = 'array'
+				const arrayElement = (zodType as any)._def.element
+				if (arrayElement) {
+					const arrayItemInfo = ZodExtractor.extractValidationInfo(arrayElement)
+					// Si el elemento del array es un objeto, extraer su estructura
+					if (arrayItemInfo.shape) {
+						item.children = ZodExtractor.schemaToStructure(z.object(arrayItemInfo.shape))
+					}
+				}
+			}
+
 			structure[key] = item
 		}
 
 		return structure
-	}
-
-	// Método no utilizado actualmente pero puede ser útil en el futuro
+	} // Método no utilizado actualmente pero puede ser útil en el futuro
 	// private static formatLabel(key: string): string {
 	//   return key
 	//     .replace(/([A-Z])/g, " $1")

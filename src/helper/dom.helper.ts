@@ -61,15 +61,27 @@ export class DOMHelper {
 		applyMaskCallback?: (input: HTMLInputElement, mask: string | RegExp) => void
 	): void {
 		switch (property) {
-			case 'visible':
+			case 'visible': {
+				const input = fieldElement.querySelector('input, textarea, select') as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 				if (value) {
 					fieldElement.style.display = ''
 					fieldElement.removeAttribute('hidden')
+					// Restaurar el atributo required si estaba presente originalmente
+					const wasRequired = fieldElement.getAttribute('data-was-required')
+					if (wasRequired === 'true' && input) {
+						input.setAttribute('required', 'true')
+					}
 				} else {
 					fieldElement.style.display = 'none'
 					fieldElement.setAttribute('hidden', 'true')
+					// Guardar si el campo era required antes de ocultarlo
+					if (input?.hasAttribute('required')) {
+						fieldElement.setAttribute('data-was-required', 'true')
+						input.removeAttribute('required')
+					}
 				}
 				break
+			}
 
 			case 'size':
 				fieldElement.style.gridColumn = `span ${value}`

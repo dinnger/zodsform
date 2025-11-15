@@ -5,18 +5,10 @@ export class FormPopulateHelper {
 	/**
 	 * Puebla un formulario con datos de forma recursiva
 	 */
-	static populate(container: HTMLElement, data: Record<string, any>, prefix: string = ''): void {
-		for (const [key, value] of Object.entries(data)) {
-			const fieldPath = prefix ? `${prefix}.${key}` : key
-			const input = container.querySelector(`[name="${fieldPath}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-
-			if (input) {
-				FormPopulateHelper.setInputValue(input, value)
-			} else if (typeof value === 'object' && value !== null) {
-				// Valor anidado, recursión
-				FormPopulateHelper.populate(container, value, fieldPath)
-			}
-		}
+	static populate(container: HTMLElement, fieldPath: string, value: Record<string, any>): void {
+		const input = container.querySelector(`[name="${fieldPath}"]`) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		if (!input) return
+		FormPopulateHelper.setInputValue(input, value)
 	}
 
 	/**

@@ -85,6 +85,10 @@
 	gap: 8px;
 }
 
+.zodsForm-checkbox-wrapper:not(label) {
+	padding-top: 30px;
+}
+
 .zodsForm-checkbox {
 	width: 18px;
 	height: 18px;
