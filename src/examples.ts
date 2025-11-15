@@ -4,22 +4,22 @@ import { ClarifyJS, z } from './index'
 export function registrationFormExample() {
 	const registrationSchema = z
 		.object({
-			firstName: z.string('El nombre es obligatorio').min(2, 'Mínimo 2 caracteres').label('Nombre').properties({ size: 6 }).optional(),
-			lastName: z.string().min(2, 'Mínimo 2 caracteres').label('Apellido').properties({ size: 6 }).optional(),
-			email: z.string().email('Email inválido').label('Correo Electrónico'),
+			firstName: z.string('El nombre es obligatorio').min(2, 'Mínimo 2 caracteres').label('First Name').properties({ size: 6 }).optional(),
+			lastName: z.string().min(2, 'Mínimo 2 caracteres').label('Last Name').properties({ size: 6 }).optional(),
+			email: z.string().email('Email inválido').label('Email'),
 			security: z
 				.object({
-					password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').label('Contras Segura').password(),
-					confirmPassword: z.string().label('Confirmar Contraseña').password()
+					password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').label('Password').password(),
+					confirmPassword: z.string().label('Confirm Password').password()
 				})
-				.label('Seguridad'),
-			country: z.enum({ mx: 'México', us: 'USA', es: 'España', ar: 'Argentina' }).label('País'),
-			zipCode: z.string().length(5, 'Código postal debe ser 5 dígitos').label('Código Postal').properties({ mask: '#####' }),
+				.label('Security'),
+			country: z.enum({ mx: 'Mexico', us: 'USA', es: 'Spain', ar: 'Argentina' }).label('Country'),
+			zipCode: z.string().length(5, 'Zip code must be 5 digits').label('Zip Code').properties({ mask: '#####' }),
 			acceptTerms: z
 				.boolean()
 				.properties({
 					size: 3,
-					placeholder: 'Acepto los términos y condiciones'
+					placeholder: 'I accept the terms and conditions'
 				})
 				.refine((data) => data === true, {
 					message: 'Debes aceptar los términos y condiciones',
