@@ -1,5 +1,5 @@
 import { StyledCheckbox, ToggleSwitch } from './custom-components'
-import { ClarifyJS, z } from './index'
+import { ZodsForm, z } from './index'
 
 // ==================== EJEMPLO: FORMULARIO CON COMPONENTES PERSONALIZADOS ====================
 export function customComponentsExample() {
@@ -36,7 +36,7 @@ export function customComponentsExample() {
 			.label('Autenticación de dos factores')
 	})
 
-	return ClarifyJS.fromSchema(customSchema, {
+	return ZodsForm.fromSchema(customSchema, {
 		// Configurar componentes personalizados para esta instancia
 		components: {
 			boolean: ToggleSwitch, // Todos los booleanos usarán toggle por defecto

@@ -3,8 +3,8 @@ import { DOMHelper, FormPopulateHelper, MaskHelper, ValidationHelper, z } from '
 import type { ComponentConfig, FieldPaths, FormConfig, InferSchemaType, Structure, StructureItem, ZodError, zodOrigin } from './interface'
 import { NestedObjectUtil, StructureUtil, ZodExtractor } from './utils'
 
-// ==================== CLARIFYJS - MOTOR DE FORMULARIOS ====================
-class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<any>> {
+// ==================== zodsForm - MOTOR DE FORMULARIOS ====================
+class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<any>> {
 	// Registro global de componentes
 	private static componentRegistry: Map<string, ComponentConfig> = new Map()
 
@@ -27,7 +27,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 			if (typeof el === 'string') {
 				this.targetElement = document.querySelector(el)
 				if (!this.targetElement) {
-					throw new Error(`ClarifyJS: No se encontró el elemento con el selector "${el}"`)
+					throw new Error(`ZodsForm: No se encontró el elemento con el selector "${el}"`)
 				}
 			} else {
 				this.targetElement = el
@@ -35,7 +35,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		}
 
 		this.container = document.createElement('form')
-		this.container.classList.add('clarifyjs-form')
+		this.container.classList.add('zodsForm-form')
 		this.structure = config.structure
 		this.baseSchema = config.schema as TSchema | undefined
 		this.schema = config.schema as TSchema | undefined
@@ -57,10 +57,10 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 	}
 
 	/**
-	 * Registra un componente globalmente para todas las instancias de ClarifyJS
+	 * Registra un componente globalmente para todas las instancias de ZodsForm
 	 */
 	static registerComponent(name: string, component: ComponentConfig): void {
-		ClarifyJS.componentRegistry.set(name, component)
+		ZodsForm.componentRegistry.set(name, component)
 	}
 
 	/**
@@ -68,7 +68,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 	 */
 	static registerComponents(components: Record<string, ComponentConfig>): void {
 		Object.entries(components).forEach(([name, component]) => {
-			ClarifyJS.componentRegistry.set(name, component)
+			ZodsForm.componentRegistry.set(name, component)
 		})
 	}
 
@@ -82,8 +82,8 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		}
 
 		// Prioridad 2: Componente por nombre de campo en registro global
-		if (fieldPath && ClarifyJS.componentRegistry.has(fieldPath)) {
-			return ClarifyJS.componentRegistry.get(fieldPath)
+		if (fieldPath && ZodsForm.componentRegistry.has(fieldPath)) {
+			return ZodsForm.componentRegistry.get(fieldPath)
 		}
 
 		// Prioridad 3: Componente por tipo en instancia
@@ -92,8 +92,8 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		}
 
 		// Prioridad 4: Componente por tipo en registro global
-		if (ClarifyJS.componentRegistry.has(type)) {
-			return ClarifyJS.componentRegistry.get(type)
+		if (ZodsForm.componentRegistry.has(type)) {
+			return ZodsForm.componentRegistry.get(type)
 		}
 
 		// Prioridad 5: Componente default
@@ -105,7 +105,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 	 */
 	render(): HTMLElement {
 		this.container.innerHTML = ''
-		this.container.classList.add('clarifyjs-form', 'bg-white', 'p-8', 'rounded-lg', 'shadow-lg')
+		this.container.classList.add('zodsForm-form', 'bg-white', 'p-8', 'rounded-lg', 'shadow-lg')
 		const fieldsContainer = this.renderStructure(this.structure)
 		this.container.appendChild(fieldsContainer)
 
@@ -122,7 +122,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 	 */
 	private renderStructure(structure: Structure, parentPath: string = ''): HTMLElement {
 		const container = document.createElement('div')
-		container.classList.add('clarifyjs-grid', 'grid', 'grid-cols-12', 'gap-3', 'mb-5')
+		container.classList.add('zodsForm-grid', 'grid', 'grid-cols-12', 'gap-3', 'mb-5')
 
 		for (const [key, item] of Object.entries(structure)) {
 			const fieldPath = (parentPath ? `${parentPath}.${key}` : key) as TSchema extends zodOrigin.ZodObject<any>
@@ -156,7 +156,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		fieldPath: TSchema extends zodOrigin.ZodObject<any> ? FieldPaths<InferSchemaType<TSchema>> : string
 	): HTMLElement {
 		const wrapper = document.createElement('div')
-		wrapper.classList.add('clarifyjs-field', 'flex', 'flex-col', 'gap-2')
+		wrapper.classList.add('zodsForm-field', 'flex', 'flex-col', 'gap-2')
 		wrapper.setAttribute('data-type', item.type)
 		wrapper.setAttribute('data-field', fieldPath)
 
@@ -165,7 +165,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 			if (item.label) {
 				const title = document.createElement('h3')
 				title.classList.add(
-					'clarifyjs-section-title',
+					'zodsForm-section-title',
 					'text-lg',
 					'font-bold',
 					'text-gray-900',
@@ -208,14 +208,14 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		// Descripción
 		if (item.description) {
 			const desc = document.createElement('small')
-			desc.classList.add('clarifyjs-description', 'text-xs', 'text-gray-600')
+			desc.classList.add('zodsForm-description', 'text-xs', 'text-gray-600')
 			desc.textContent = item.description
 			wrapper.appendChild(desc)
 		}
 
 		// Error container
 		const errorContainer = document.createElement('div')
-		errorContainer.classList.add('clarifyjs-error', 'text-xs', 'text-red-500', 'min-h-[18px]', 'opacity-0', 'transition-opacity')
+		errorContainer.classList.add('zodsForm-error', 'text-xs', 'text-red-500', 'min-h-[18px]', 'opacity-0', 'transition-opacity')
 		errorContainer.setAttribute('data-error-for', fieldPath)
 		wrapper.appendChild(errorContainer)
 
@@ -502,7 +502,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		// 1. Actualizar la estructura interna
 		const structureItem = this.getStructureItem(fieldPath)
 		if (!structureItem) {
-			console.warn(`ClarifyJS: No se encontró el campo "${fieldPath}" en la estructura`)
+			console.warn(`ZodsForm: No se encontró el campo "${fieldPath}" en la estructura`)
 			return
 		}
 
@@ -519,7 +519,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 		const targetContainer = container || this.container
 		const fieldElement = targetContainer.querySelector(`[data-field="${fieldPath}"]`) as HTMLElement
 		if (!fieldElement) {
-			console.warn(`ClarifyJS: No se encontró el elemento DOM para "${fieldPath}"`)
+			console.warn(`ZodsForm: No se encontró el elemento DOM para "${fieldPath}"`)
 			return
 		}
 
@@ -561,9 +561,9 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 			onValidate?: (isValid: boolean, data: any, errors: any) => void
 			components?: Record<string, ComponentConfig>
 		}
-	): ClarifyJS<T> {
+	): ZodsForm<T> {
 		const structure = ZodExtractor.schemaToStructure(schema)
-		return new ClarifyJS<T>(
+		return new ZodsForm<T>(
 			{
 				structure,
 				schema,
@@ -578,7 +578,7 @@ class ClarifyJS<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<a
 }
 
 // También puedes exportar para usar como librería
-export { ClarifyJS, ZodExtractor, z }
+export { ZodsForm, ZodExtractor, z }
 export type { Structure, StructureItem, FormConfig }
 
 export type { ComponentConfig, RenderConfig } from './interface'

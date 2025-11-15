@@ -70,7 +70,7 @@ export const ToggleSwitch: ComponentConfig = {
 				circle.classList.add('translate-x-1')
 			}
 
-			// Disparar evento change para que ClarifyJS detecte el cambio
+			// Disparar evento change para que ZodsForm detecte el cambio
 			input.dispatchEvent(new Event('change', { bubbles: true }))
 		})
 

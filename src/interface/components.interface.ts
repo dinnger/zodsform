@@ -1,5 +1,5 @@
 /**
- * Tipos para componentes personalizados de ClarifyJS
+ * Tipos para componentes personalizados de ZodsForm
  */
 
 import type { StructureItem } from './clarify.interface'

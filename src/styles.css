@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==================== CLARIFYJS STYLES ==================== */
+/* ==================== zodsForm STYLES ==================== */
 
 * {
 	box-sizing: border-box;
@@ -24,7 +24,7 @@ body {
 
 /* ==================== FORMULARIO ==================== */
 
-.clarifyjs-form {
+.zodsForm-form {
 	background: white;
 	padding: 30px;
 	border-radius: 8px;
@@ -33,7 +33,7 @@ body {
 
 /* ==================== GRID SYSTEM ==================== */
 
-.clarifyjs-grid {
+.zodsForm-grid {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
 	gap: 20px;
@@ -42,26 +42,26 @@ body {
 
 /* ==================== CAMPOS ==================== */
 
-.clarifyjs-field {
+.zodsForm-field {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 }
 
-.clarifyjs-field label {
+.zodsForm-field label {
 	font-weight: 600;
 	font-size: 14px;
 	color: #374151;
 }
 
-.clarifyjs-field label .required {
+.zodsForm-field label .required {
 	color: #ef4444;
 	margin-left: 2px;
 }
 
 /* ==================== ERRORES ==================== */
 
-.clarifyjs-error {
+.zodsForm-error {
 	font-size: 12px;
 	color: #ef4444;
 	min-height: 18px;
@@ -69,37 +69,37 @@ body {
 	transition: opacity 0.2s ease;
 }
 
-.clarifyjs-error.visible {
+.zodsForm-error.visible {
 	opacity: 1;
 }
 
-.clarifyjs-field.has-error input,
-.clarifyjs-field.has-error textarea,
-.clarifyjs-field.has-error select {
+.zodsForm-field.has-error input,
+.zodsForm-field.has-error textarea,
+.zodsForm-field.has-error select {
 	border-color: #ef4444;
 }
 
-.clarifyjs-field.has-error input:focus,
-.clarifyjs-field.has-error textarea:focus,
-.clarifyjs-field.has-error select:focus {
+.zodsForm-field.has-error input:focus,
+.zodsForm-field.has-error textarea:focus,
+.zodsForm-field.has-error select:focus {
 	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 /* ==================== SECCIONES Y BOXES ==================== */
 
-.clarifyjs-field[data-type="section"],
-.clarifyjs-field[data-type="box"] {
+.zodsForm-field[data-type="section"],
+.zodsForm-field[data-type="box"] {
 	grid-column: 1 / -1;
 }
 
-.clarifyjs-field[data-type="box"] {
+.zodsForm-field[data-type="box"] {
 	background: #f9fafb;
 	padding: 20px;
 	border-radius: 6px;
 	border: 1px solid #e5e7eb;
 }
 
-.clarifyjs-section-title {
+.zodsForm-section-title {
 	font-size: 18px;
 	font-weight: 700;
 	color: #111827;
@@ -108,7 +108,7 @@ body {
 	border-bottom: 2px solid #e5e7eb;
 }
 
-.clarifyjs-field[data-type="box"] .clarifyjs-section-title {
+.zodsForm-field[data-type="box"] .zodsForm-section-title {
 	font-size: 16px;
 	border-bottom: 1px solid #d1d5db;
 }
@@ -116,15 +116,15 @@ body {
 /* ==================== RESPONSIVE ==================== */
 
 @media (max-width: 768px) {
-	.clarifyjs-grid {
+	.zodsForm-grid {
 		grid-template-columns: 1fr;
 	}
 
-	.clarifyjs-field {
+	.zodsForm-field {
 		grid-column: 1 / -1 !important;
 	}
 
-	.clarifyjs-form {
+	.zodsForm-form {
 		padding: 20px;
 	}
 }
@@ -144,6 +144,6 @@ body {
 	}
 }
 
-.clarifyjs-field.has-error {
+.zodsForm-field.has-error {
 	animation: shake 0.3s ease;
 }

@@ -2,7 +2,7 @@
 
 **TypeScript library to create dynamic forms with automatic validation using Zod and Tailwind CSS**
 
-ZodsForm (formerly ClarifyJS) allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, Tailwind CSS styling, and a simple, intuitive API.
+ZodsForm allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, Tailwind CSS styling, and a simple, intuitive API.
 
 ![Form Preview](src/assets/img/form.png)
 

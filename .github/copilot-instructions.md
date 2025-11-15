@@ -1,7 +1,7 @@
-# ClarifyJS AI Coding Agent Instructions
+# ZodsForm AI Coding Agent Instructions
 
 ## Project Overview
-ClarifyJS is a TypeScript library that generates dynamic HTML forms with automatic validation from Zod schemas. It provides real-time validation, Tailwind CSS styling, and a component-based architecture for customization.
+ZodsForm is a TypeScript library that generates dynamic HTML forms with automatic validation from Zod schemas. It provides real-time validation, Tailwind CSS styling, and a component-based architecture for customization.
 
 ## Core Architecture
 
@@ -15,7 +15,7 @@ ClarifyJS is a TypeScript library that generates dynamic HTML forms with automat
 - `schemaToStructure()`: Converts Zod schemas to internal `Structure` format
 - Handles nested objects (`z.object()`), enums (`z.enum()`), optional fields (`z.optional()`)
 
-**Key Class: `ClarifyJS`**
+**Key Class: `ZodsForm`**
 - Main form engine that renders, validates, and manages form state
 - Uses a nested path system (`"user.address.street"`) for field tracking
 - Maintains `formData` and `errors` state internally
@@ -23,15 +23,15 @@ ClarifyJS is a TypeScript library that generates dynamic HTML forms with automat
 ### Component Priority System (Most to Least Specific)
 1. **Zod-level**: `.component(CustomComponent)` on individual schema fields
 2. **Instance by name**: `components: { fieldName: Component }` in form config
-3. **Global by name**: `ClarifyJS.registerComponent('fieldName', Component)`
+3. **Global by name**: `ZodsForm.registerComponent('fieldName', Component)`
 4. **Instance by type**: `components: { boolean: Component }` in form config
-5. **Global by type**: `ClarifyJS.registerComponent('boolean', Component)`
+5. **Global by type**: `ZodsForm.registerComponent('boolean', Component)`
 6. **Default components**: Built-in `TextInput`, `PasswordInput`, `CheckboxInput`, etc.
 
 ## Critical Patterns
 
 ### Zod Extensions (Chaining Methods)
-ClarifyJS extends Zod's `ZodType.prototype` with custom methods:
+ZodsForm extends Zod's `ZodType.prototype` with custom methods:
 ```typescript
 z.string().label("Custom Label")           // Sets display label
 z.string().properties({ size: 6 })        // Grid size (1-12 columns)
@@ -89,7 +89,7 @@ Uses **strict mode** with `noUncheckedIndexedAccess`, `exactOptionalPropertyType
 
 1. **Empty string vs undefined**: Optional fields should use `undefined`, not `""`. Check with `|| undefined` when extracting values.
 
-2. **Enum with labels**: ClarifyJS extends `z.enum()` to accept objects:
+2. **Enum with labels**: ZodsForm extends `z.enum()` to accept objects:
    ```typescript
    z.enum({ mx: "México", us: "USA" })  // Keys for validation, values for display
    ```
@@ -105,7 +105,7 @@ Uses **strict mode** with `noUncheckedIndexedAccess`, `exactOptionalPropertyType
 
 ## File Organization
 
-- **`src/index.ts`**: Main library - Zod extensions, ClarifyJS class, ZodExtractor
+- **`src/index.ts`**: Main library - Zod extensions, ZodsForm class, ZodExtractor
 - **`src/components/`**: Component system - types, default implementations
 - **`src/examples.ts`**: 7 example forms demonstrating features
 - **`src/custom-components.ts`**: Example custom components (ToggleSwitch, StyledCheckbox)

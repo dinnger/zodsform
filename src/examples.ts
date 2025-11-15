@@ -1,4 +1,4 @@
-import { ClarifyJS, z } from './index'
+import { ZodsForm, z } from './index'
 
 // ==================== EJEMPLO 1: FORMULARIO DE REGISTRO ====================
 export function registrationFormExample() {
@@ -25,14 +25,14 @@ export function registrationFormExample() {
 					message: 'Debes aceptar los términos y condiciones',
 					path: ['acceptTerms']
 				}),
-			age: z.number().min(18, 'Debes ser mayor de edad').max(120).label('Edad').properties({ visible: false })
+			age: z.number().min(18, 'Debes ser mayor de edad').max(120).label('Age').properties({ visible: false })
 		})
 		.refine((data) => data.security.password === data.security.confirmPassword, {
 			message: 'Las contraseñas no coinciden',
 			path: ['security.confirmPassword']
 		})
 
-	const form = ClarifyJS.fromSchema(registrationSchema, {
+	const form = ZodsForm.fromSchema(registrationSchema, {
 		onValidate: (isValid, _data, _errors) => {
 			// Este callback se puede usar con frameworks reactivos
 			// Vue: ref(isValid) / React: setState(isValid) / Angular: signal(isValid)
@@ -83,7 +83,7 @@ export function addressFormExample() {
 		phone: z.string().regex(/^\d{10}$/, 'Teléfono debe tener 10 dígitos')
 	})
 
-	const form = ClarifyJS.fromSchema(addressSchema, {
+	const form = ZodsForm.fromSchema(addressSchema, {
 		onValidate: (isValid, _data, errors) => {
 			console.log('🔍 Estado de validación:', isValid ? '✅ Válido' : '❌ Inválido')
 			if (!isValid) {
@@ -133,7 +133,7 @@ export function productFormExample() {
 		discount: z.number().min(0).max(100, 'Descuento entre 0 y 100').optional()
 	})
 
-	return ClarifyJS.fromSchema(productSchema, {
+	return ZodsForm.fromSchema(productSchema, {
 		onValidate: (isValid) => {
 			// Signal simple para frameworks reactivos
 			console.log('🔍 Formulario válido:', isValid)
@@ -172,7 +172,7 @@ export function userProfileExample() {
 		})
 	})
 
-	return ClarifyJS.fromSchema(profileSchema, {
+	return ZodsForm.fromSchema(profileSchema, {
 		onValidate: (isValid) => {
 			console.log('🔍 Perfil válido:', isValid)
 			// Actualizar el estado del botón de submit
@@ -213,7 +213,7 @@ export function customValidationExample() {
 		website: z.string().url('URL inválida').or(z.literal(''))
 	})
 
-	return ClarifyJS.fromSchema(customSchema, {
+	return ZodsForm.fromSchema(customSchema, {
 		onValidate: (isValid) => {
 			console.log('🔍 Validaciones custom:', isValid ? '✅ Todas pasaron' : '❌ Hay errores')
 			// Actualizar el estado del botón de submit
@@ -256,7 +256,7 @@ export function masksExample() {
 			.password()
 	})
 
-	return ClarifyJS.fromSchema(masksSchema, {
+	return ZodsForm.fromSchema(masksSchema, {
 		onValidate: (isValid) => {
 			console.log('🔍 Máscaras válidas:', isValid)
 			if (typeof window !== 'undefined' && (window as any).updateSubmitButton) {

@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClarifyJS - Ejemplo con Selector de Elemento</title>
+  <title>ZodsForm - Ejemplo con Selector de Elemento</title>
 
   <!-- Tailwind CSS desde CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Estilos personalizados de ClarifyJS -->
+  <!-- Estilos personalizados de ZodsForm -->
   <link rel="stylesheet" href="./styles.css">
 
   <script type="importmap">
@@ -24,7 +24,7 @@
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-12">
   <div class="container mx-auto max-w-6xl px-4">
     <header class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-gray-900 mb-3">ClarifyJS 🚀</h1>
+      <h1 class="text-5xl font-bold text-gray-900 mb-3">ZodsForm 🚀</h1>
       <p class="text-xl text-gray-600 mb-2">Formularios dinámicos con selector de elemento</p>
       <p class="text-sm text-gray-500">Demostración de montaje automático con <code
           class="bg-gray-200 px-2 py-1 rounded">el</code> selector</p>
@@ -76,13 +76,13 @@
 
     <footer class="text-center mt-12 text-gray-600 text-sm">
       <p class="mb-2">✨ Todos los formularios usan el mismo schema de Zod</p>
-      <p>Hecho con ❤️ usando ClarifyJS + Tailwind CSS</p>
+      <p>Hecho con ❤️ usando ZodsForm + Tailwind CSS</p>
     </footer>
   </div>
 
   <script type="module">
     import { z } from "zod";
-    import { ClarifyJS } from "./index.ts";
+    import { ZodsForm } from "./index.ts";
 
     // Schema Zod compartido
     const contactSchema = z.object({
@@ -98,7 +98,7 @@
     };
 
     // FORMULARIO 1: Con selector CSS string
-    const form1 = ClarifyJS.fromSchema(contactSchema, {
+    const form1 = ZodsForm.fromSchema(contactSchema, {
       el: "#form-1", // Selector CSS
       onSubmit: (data) => handleSubmit(data, 1),
       onChange: (data, errors) => {
@@ -109,7 +109,7 @@
 
     // FORMULARIO 2: Con elemento DOM directo
     const form2Element = document.getElementById("form-2");
-    const form2 = ClarifyJS.fromSchema(contactSchema, {
+    const form2 = ZodsForm.fromSchema(contactSchema, {
       el: form2Element, // Elemento DOM
       onSubmit: (data) => handleSubmit(data, 2),
       onChange: (data, errors) => {
@@ -119,7 +119,7 @@
     form2.render();
 
     // FORMULARIO 3: Montaje manual (método tradicional)
-    const form3 = ClarifyJS.fromSchema(contactSchema, {
+    const form3 = ZodsForm.fromSchema(contactSchema, {
       // Sin especificar 'el'
       onSubmit: (data) => handleSubmit(data, 3),
       onChange: (data, errors) => {

@@ -1,4 +1,4 @@
-# 🚀 Inicio Rápido - ClarifyJS
+# 🚀 Inicio Rápido - ZodsForm
 
 ## 📦 Instalación (1 minuto)
 
@@ -50,7 +50,7 @@ Crea un archivo `test.html`:
   <link rel="stylesheet" href="src/styles.css">
   <script type="module">
     import { z } from "zod";
-    import { ClarifyJS } from "./src/index.ts";
+    import { ZodsForm } from "./src/index.ts";
 
     const schema = z.object({
       name: z.string().min(2, "Muy corto"),
@@ -58,7 +58,7 @@ Crea un archivo `test.html`:
       age: z.number().min(18, "Debes ser mayor de edad"),
     });
 
-    const form = ClarifyJS.fromSchema(schema, {
+    const form = ZodsForm.fromSchema(schema, {
       onSubmit: (data) => alert(JSON.stringify(data, null, 2))
     });
 

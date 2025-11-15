@@ -45,4 +45,4 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - `z.optional()` → campos opcionales
 - Validaciones personalizadas con mensajes de error
 
-[0.1.0]: https://github.com/dinnger/ClarifyJS/releases/tag/v0.1.0
+[0.1.0]: https://github.com/dinnger/zodsform/releases/tag/v0.1.0
