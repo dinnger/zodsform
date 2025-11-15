@@ -1,8 +1,8 @@
 # ZodsForm 🚀
 
-**TypeScript library to create dynamic forms with automatic validation using Zod and Tailwind CSS**
+**TypeScript library to create dynamic forms with automatic validation using Zod**
 
-ZodsForm allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, Tailwind CSS styling, and a simple, intuitive API.
+ZodsForm allows you to create complete HTML forms from Zod schemas or JSON structures, with real-time validation, and a simple, intuitive API.
 
 ![Form Preview](src/assets/img/form.png)
 
@@ -10,7 +10,6 @@ ZodsForm allows you to create complete HTML forms from Zod schemas or JSON struc
 
 - 🎯 **Auto-generation from Zod**: Convert Zod schemas into functional forms
 - ✅ **Real-time validation**: Validation while user types and on blur
-- 🎨 **Tailwind CSS v4 integrated**: Modern and responsive styles
 - 🔄 **Nested field support**: Objects and complex structures with dot-notation
 - 📦 **Native TypeScript**: Full typing and autocomplete
 - 🎭 **Input masks**: Automatic formatting (phone, credit card, ZIP, etc.) with string or regex
@@ -545,7 +544,6 @@ Sí, de tres formas:
 ## 🙏 Acknowledgments
 
 - [Zod](https://github.com/colinhacks/zod) - TypeScript-first validation library
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - The TypeScript community
 
 ## 📝 License
