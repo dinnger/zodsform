@@ -1,6 +1,6 @@
 {
   "name": "zodsform",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Generador de formularios dinámicos con validación automática usando Zod",
   "main": "dist/index.js",
   "module": "dist/index.js",

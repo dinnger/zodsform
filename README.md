@@ -52,8 +52,7 @@ Or in HTML:
 ### 1. From a Zod Schema with Extensions (Recommended)
 
 ```typescript
-import { z } from "zod";
-import { ZodsForm } from "zodsform";
+import { ZodsForm, z } from "zodsform";
 import "zodsform/dist/styles.css";
 
 // Define your Zod schema with ZodsForm extensions
