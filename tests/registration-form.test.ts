@@ -27,7 +27,7 @@ describe('Formulario de Registro - Validaciones', () => {
 			email: 'test@example.com',
 			password: 'Password123!',
 			confirmPassword: 'Password123!',
-			country: 'mx',
+			country: '',
 			zipCode: '12345',
 			acceptTerms: true,
 			age: ''
@@ -100,6 +100,26 @@ describe('Formulario de Registro - Validaciones', () => {
 		const appDiv = document.getElementById('app')
 		if (appDiv) {
 			appDiv.appendChild(form.render())
+
+			// Crear y añadir botón de submit
+			const submitButton = document.createElement('button')
+			submitButton.type = 'submit'
+			submitButton.disabled = true // Inicialmente deshabilitado
+			submitButton.className =
+				'zodsForm-submit bg-blue-500 text-white px-6 py-3 border-none rounded-md text-base font-semibold cursor-pointer transition-all w-full mt-2.5 hover:bg-blue-600 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(59,130,246,0.3)] active:translate-y-0 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none'
+			submitButton.textContent = 'Submit'
+
+			// Añadir el botón al formulario
+			const formElement = appDiv.querySelector('form')
+			if (formElement) {
+				formElement.appendChild(submitButton)
+			}
+
+			;(window as any).updateSubmitButton = (isValid: boolean) => {
+				if (submitButton) {
+					submitButton.disabled = !isValid
+				}
+			}
 		}
 		await wait(300)
 	})

@@ -428,19 +428,16 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		const actualInput = input.querySelector('input, textarea, select') || input
 
 		// Para checkboxes usar 'change', para otros usar 'input'
-		const eventType = actualInput instanceof HTMLInputElement && actualInput.type === 'checkbox' ? 'change' : 'input'
 
-		actualInput.addEventListener(eventType, () => {
-			this.handleFieldChange(fieldPath, actualInput as any, item)
-			// Para checkboxes, validar inmediatamente después del cambio
-			// if (actualInput instanceof HTMLInputElement && actualInput.type === 'checkbox') {
-			this.validateField(fieldPath, item, actualInput as HTMLElement)
-			// }
-		})
-
-		actualInput.addEventListener('blur', () => {
-			this.validateField(fieldPath, item, actualInput as HTMLElement)
-		})
+		for (const eventType of ['input', 'change', 'blur']) {
+			actualInput.addEventListener(eventType, () => {
+				this.handleFieldChange(fieldPath, actualInput as any, item)
+				// Para checkboxes, validar inmediatamente después del cambio
+				// if (actualInput instanceof HTMLInputElement && actualInput.type === 'checkbox') {
+				this.validateField(fieldPath, item, actualInput as HTMLElement)
+				// }
+			})
+		}
 
 		return input
 	}
@@ -618,17 +615,30 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		// Determinar si hay errores actuales
 		const hasErrors = Object.keys(this.errors).length > 0
 		let isValid = !hasErrors
+		let errors = {}
 
 		// Validar con el schema completo si existe (solo campos visibles)
 		if (this.schema && !hasErrors) {
 			const result = ValidationHelper.validateSchema(this.schema, this.formData)
 			if (!result.success) {
 				isValid = false
+				const errors = JSON.parse(result.error.toString()).map((e: any) => {
+					return { path: e.path, message: e.message }
+				})
+				for (const error of errors) {
+					// console.log('🔍 Errores de validación:', error)
+					for (const fieldPath of error.path) {
+						if (!errors[fieldPath]) errors[fieldPath] = []
+						errors[fieldPath].push(error.message)
+					}
+				}
 			}
+		} else {
+			errors = this.errors
 		}
 
 		// Invocar callback con el estado actual
-		this.onValidateCallback({ isValid, data: this.formData, errors: this.errors })
+		this.onValidateCallback({ isValid, data: this.formData, errors })
 	}
 
 	/**

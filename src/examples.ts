@@ -65,7 +65,7 @@ export function registrationFormExample() {
 		}
 	})
 
-	form.setData({ fieldPath: 'firstName', value: 'Juan' })
+	// form.setData({ fieldPath: 'firstName', value: 'Juan' }) // Commented out for testing - tests expect clean form state
 
 	return form
 }
