@@ -825,8 +825,21 @@ class ZodsForm<TSchema extends zodOrigin.ZodObject<any> = zodOrigin.ZodObject<an
 		// 3. Validar el campo después de actualizar el valor programáticamente
 		this.validateField(fieldPath, structureItem)
 
-		// 4. Notificar el estado de validación para actualizar el botón submit
-		this.notifyValidationState()
+		this.formData[fieldPath] = value
+
+		// 4. Se agrega un pequeño delay para asegurar que el DOM esté actualizado
+		setTimeout(() => {
+			const fieldElement = this.container.querySelector(`[data-field="${fieldPath}"]`) as HTMLElement
+			if (!fieldElement) {
+				console.warn(`ZodsForm: No se encontró el elemento DOM para "${fieldPath}"`)
+				return
+			}
+			const actualInput = fieldElement.querySelector('input, textarea, select') as
+				| HTMLInputElement
+				| HTMLTextAreaElement
+				| HTMLSelectElement
+			this.handleFieldChange(fieldPath, actualInput, structureItem)
+		}, 1)
 	}
 
 	/**

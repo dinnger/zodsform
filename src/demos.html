@@ -14,12 +14,8 @@
   <script type="module">
     import { customComponentsExample } from "./custom-components-example.ts";
     import {
-      addressFormExample,
-      customValidationExample,
       masksExample,
-      productFormExample,
       registrationFormExample,
-      userProfileExample,
     } from "./examples.ts";
 
 
@@ -32,26 +28,6 @@
         title: "Formulario de Registro",
         description: "Schema Zod completo con validaciones complejas y confirmación de contraseña",
         fn: registrationFormExample,
-      },
-      address: {
-        title: "Formulario de Dirección",
-        description: "Objetos anidados y validaciones de código postal",
-        fn: addressFormExample,
-      },
-      product: {
-        title: "Formulario de Producto",
-        description: "Campos opcionales, select con enum y checkbox",
-        fn: productFormExample,
-      },
-      profile: {
-        title: "Perfil de Usuario",
-        description: "Validaciones regex, objetos anidados múltiples",
-        fn: userProfileExample,
-      },
-      custom: {
-        title: "Validaciones Personalizadas",
-        description: "Expresiones regulares complejas y reglas de contraseña",
-        fn: customValidationExample,
       },
       masks: {
         title: "Máscaras de Entrada",
@@ -141,12 +117,14 @@
 </head>
 
 <body>
-  <h1>🚀 ZodsForm - Demos Interactivas</h1>
-  <p class="subtitle">Generador de formularios con validación Zod automática</p>
+  <h1 style="font-size: 2rem; text-align: center;">🚀 ZodsForm - Demos Interactivas</h1>
+  <div style="text-align: center;">
+    <p class="subtitle">Generador de formularios con validación Zod automática</p>
 
-  <div id="demo-selector" class="demo-selector"></div>
+    <div id="demo-selector" class="demo-selector"></div>
 
-  <div id="root" class="demo-container"></div>
+    <div id="root" class="demo-container"></div>
+  </div>
 </body>
 
 </html>

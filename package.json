@@ -1,64 +1,64 @@
 {
-  "name": "zodsform",
-  "version": "0.2.3",
-  "description": "Generador de formularios dinámicos con validación automática usando Zod",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build:css": "cp src/styles.css dist/styles.css",
-    "build:ts": "tsc",
-    "build": "npm run build:ts && npm run build:css",
-    "dev:ts": "tsc --watch",
-    "dev": "npm run dev:ts",
-    "start": "node dist/index.js",
-    "test": "vitest",
-    "test:ui": "vitest --ui"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dinnger/zodsform.git"
-  },
-  "keywords": [
-    "form",
-    "json",
-    "zod",
-    "validation",
-    "typescript",
-    "dynamic-forms",
-    "form-builder",
-    "schema-validation",
-    "form-generator",
-    "css",
-    "form-validation"
-  ],
-  "author": "Dinnger",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dinnger/zodsform/issues"
-  },
-  "homepage": "https://github.com/dinnger/zodsform#readme",
-  "peerDependencies": {
-    "zod": "^3.0.0 || ^4.0.0"
-  },
-  "dependencies": {
-    "zod": "^3.0.0 || ^4.0.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.5",
-    "@playwright/test": "^1.56.1",
-    "@types/node": "^24.10.1",
-    "@vitest/browser": "^4.0.8",
-    "@vitest/browser-playwright": "^4.0.8",
-    "autoprefixer": "^10.4.22",
-    "playwright": "^1.56.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.8"
-  }
+	"name": "zodsform",
+	"version": "0.2.3",
+	"description": "Generador de formularios dinámicos con validación automática usando Zod",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"build:css": "copy src/styles.css dist/styles.css",
+		"build:ts": "tsc",
+		"build": "npm run build:ts && npm run build:css",
+		"dev:ts": "tsc --watch",
+		"dev": "npm run dev:ts",
+		"start": "node dist/index.js",
+		"test": "vitest",
+		"test:ui": "vitest --ui"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/dinnger/zodsform.git"
+	},
+	"keywords": [
+		"form",
+		"json",
+		"zod",
+		"validation",
+		"typescript",
+		"dynamic-forms",
+		"form-builder",
+		"schema-validation",
+		"form-generator",
+		"css",
+		"form-validation"
+	],
+	"author": "Dinnger",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/dinnger/zodsform/issues"
+	},
+	"homepage": "https://github.com/dinnger/zodsform#readme",
+	"peerDependencies": {
+		"zod": "^3.0.0 || ^4.0.0"
+	},
+	"dependencies": {
+		"zod": "^3.0.0 || ^4.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.5",
+		"@playwright/test": "^1.56.1",
+		"@types/node": "^24.10.1",
+		"@vitest/browser": "^4.0.8",
+		"@vitest/browser-playwright": "^4.0.8",
+		"autoprefixer": "^10.4.22",
+		"playwright": "^1.56.1",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.8"
+	}
 }
